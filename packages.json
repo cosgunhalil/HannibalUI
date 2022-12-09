@@ -1,3 +1,12 @@
 {
-	
+	"name": "com.voxelpixel.hannibalUI",
+	"version": "1.0.0",
+	"displayName": "Hanibal UI",
+	"description": "Create perfect user interfaces without coding!",
+	"unity": "2021.3",
+	"author":{
+		"name": "Halil Cosgun",
+		"email": "cosgun.halil@gmail.com",
+		"url": "https://github.com/cosgunhalil/HannibalUI"
+	}
 }
