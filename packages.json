@@ -1,5 +1,5 @@
 {
-	"name": "com.voxelpixel.hannibalUI",
+	"name": "com.voxelpixel.hannibal-ui",
 	"version": "1.0.0",
 	"displayName": "Hanibal UI",
 	"description": "Create perfect user interfaces without coding!",
@@ -7,6 +7,6 @@
 	"author":{
 		"name": "Halil Cosgun",
 		"email": "cosgun.halil@gmail.com",
-		"url": ""
+		"url": "https://github.com/cosgunhalil/HannibalUI"
 	}
 }
