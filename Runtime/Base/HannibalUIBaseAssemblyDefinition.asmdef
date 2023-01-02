@@ -1,0 +1,4 @@
+{
+	"name": "HannibalUIBaseAssemblyDefinition",
+	"references":[ "GUID:e323461e9af4c441e8a5a8d8f971ae3f", "GUID:08c8f16522c5644f6b9c0c2f30dc8211" ]
+}
