@@ -4,9 +4,11 @@ namespace com.voxelpixel.hannibal_ui.base_component
     using System.Collections;
     using UnityEngine;
 
-    public class LB_UIManager : MonoBehaviour
+    public class VP_Director : MonoBehaviour
     {
+        [SerializeField]
         private VP_Canvas[] canvases;
+        private VP_Canvas activeCanvas = null;
 
         public void Awake()
         {
@@ -35,13 +37,40 @@ namespace com.voxelpixel.hannibal_ui.base_component
 
         public void EnableCanvas(CanvasType canvasType)
         {
-            //TODO: handle
+            if (canvases.Length == 0)
+            {
+                return;
+            }
+
+            var targetCanvas = canvases[(int)canvasType];
+
+            if (activeCanvas == null)
+            {
+                activeCanvas = targetCanvas;
+                activeCanvas.Activate();
+                return;
+            }
+
+            if (activeCanvas == targetCanvas) 
+            {
+                return;
+            }
+
+            StopCoroutine("EnableRequestedCanvas");
+            StartCoroutine("EnableRequestedCanvas", targetCanvas);
         }
 
         private IEnumerator EnableRequestedCanvas(VP_Canvas targetCanvas)
         {
-            //TODO: handle
-            yield break;
+            if (activeCanvas != null)
+            {
+                activeCanvas.Deactivate();
+            }
+
+            yield return new WaitForSeconds(.5f);
+
+            activeCanvas = targetCanvas;
+            activeCanvas.Activate();
         }
     }
 }
