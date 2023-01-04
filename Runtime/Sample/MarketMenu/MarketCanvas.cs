@@ -1,18 +1,18 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class MarketCanvas : MonoBehaviour
+namespace com.voxelpixel.hannibal_ui.sample
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    using System.Collections;
+    using System.Collections.Generic;
+    using UnityEngine;
+    using com.voxelpixel.hannibal_ui.base_component;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+
+    public class MarketCanvas : VP_Canvas
+    { 
+        public override void Setup()
+        {
+            Debug.Log("MarketCanvas::Setup()");
+        }
     }
 }
+
+

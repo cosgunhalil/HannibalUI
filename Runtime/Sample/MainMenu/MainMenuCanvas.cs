@@ -1,18 +1,15 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class MainMenuCanvas : MonoBehaviour
+namespace com.voxelpixel.hannibal_ui.sample
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    using com.voxelpixel.hannibal_ui.base_component;
+    using UnityEngine;
 
-    // Update is called once per frame
-    void Update()
+    public class MainMenuCanvas : VP_Canvas
     {
-        
+        public override void Setup()
+        {
+            Debug.Log("MainMenuCanvas::Setup()");
+        }
     }
 }
+
+

@@ -1,18 +1,15 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class CharactersCanvas : MonoBehaviour
+namespace com.voxelpixel.hannibal_ui.sample
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    using UnityEngine;
+    using com.voxelpixel.hannibal_ui.base_component;
 
-    // Update is called once per frame
-    void Update()
+    public class CharactersCanvas : VP_Canvas
     {
-        
+        public override void Setup()
+        {
+            Debug.Log("CharactersCanvas::Setup()");
+        }
     }
 }
+
+
