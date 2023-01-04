@@ -1,4 +1,4 @@
 {
-	"name": "hannibal-runtime-assembly-definitions",
+	"name": "SampleAssemblyDefinition",
 	"references":[ "GUID:bd3d42bc79f1d40d5a8d69fd8b628bd2" ]
 }
