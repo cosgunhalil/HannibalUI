@@ -7,7 +7,7 @@ namespace com.voxelpixel.hannibal_ui.base_component
     public class VP_Director : MonoBehaviour
     {
         [SerializeField]
-        private VP_Canvas[] canvases;
+        private VP_Canvas[] canvases;//TODO: solve the order issue! Order is really important in here! 
         private VP_Canvas activeCanvas = null;
 
         public void Awake()
@@ -24,7 +24,11 @@ namespace com.voxelpixel.hannibal_ui.base_component
             {
                 canvas.Init();
                 canvas.LateInit();
+                canvas.Deactivateimmediately();
             }
+
+            activeCanvas = canvases[(int)CanvasType.Main];
+            activeCanvas.Activate();
         }
 
         public void OnDestroy()
@@ -56,6 +60,7 @@ namespace com.voxelpixel.hannibal_ui.base_component
                 return;
             }
 
+            //TODO: use Unitask instead of coroutine!
             StopCoroutine("EnableRequestedCanvas");
             StartCoroutine("EnableRequestedCanvas", targetCanvas);
         }
@@ -67,7 +72,7 @@ namespace com.voxelpixel.hannibal_ui.base_component
                 activeCanvas.Deactivate();
             }
 
-            yield return new WaitForSeconds(.5f);
+            yield return new WaitForSeconds(.5f);//TODO: We hate magic numbers!!!
 
             activeCanvas = targetCanvas;
             activeCanvas.Activate();

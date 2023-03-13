@@ -64,20 +64,25 @@ namespace com.voxelpixel.hannibal_ui.base_component
 
         public void Activate()
         {
-            if (panelCanvas.enabled) 
+            if (panelCanvas.enabled)
             {
                 return;
             }
 
-            panelCanvas.enabled = true;
-            panelCanvas.sortingOrder = 1;
+            Activateimmediately();
             StopCoroutine("DeactivateWithAnimation");
             PlayActivateAnimations();
         }
 
+        public void Activateimmediately() 
+        {
+            panelCanvas.enabled = true;
+            panelCanvas.sortingOrder = 1;
+        }
+
         public void Deactivate()
         {
-            if (!panelCanvas.enabled) 
+            if (!panelCanvas.enabled)
             {
                 return;
             }
@@ -91,6 +96,12 @@ namespace com.voxelpixel.hannibal_ui.base_component
             panelCanvas.sortingOrder = 2;
 
             yield return new WaitForSeconds(animationTime);
+            Deactivateimmediately();
+        }
+
+        //TODO: This function should not be public! Solve this issue!
+        public void Deactivateimmediately()
+        {
             panelCanvas.sortingOrder = 0;
             panelCanvas.enabled = false;
         }
