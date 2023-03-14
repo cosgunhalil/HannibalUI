@@ -7,7 +7,6 @@ namespace com.voxelpixel.hannibal_ui.base_component
     {
         protected RectTransform ObjectRectTransform;
         protected List<IAnimable> AnimationComponents;
-
         private float animationTime;
 
         public override void Init()
@@ -17,7 +16,7 @@ namespace com.voxelpixel.hannibal_ui.base_component
         }
 
         public abstract void Setup(Vector2 canvasSize);
-        public void PlayActivateAnimation() 
+        public void PlayActivateAnimation(float activationTime) 
         {
             if (ObjectRectTransform == null) 
             {
@@ -27,11 +26,11 @@ namespace com.voxelpixel.hannibal_ui.base_component
 
             foreach (var animationComponent in AnimationComponents)
             {
-                animationComponent.PlayForward();
+                animationComponent.PlayForward(activationTime);
             }
         }
 
-        public void PlayDeactivateAnimation()
+        public void PlayDeactivateAnimation(float deactivationTime)
         {
             if (ObjectRectTransform == null)
             {
@@ -41,7 +40,7 @@ namespace com.voxelpixel.hannibal_ui.base_component
 
             foreach (var animationComponent in AnimationComponents)
             {
-                animationComponent.PlayRewind();
+                animationComponent.PlayRewind(deactivationTime);
             }
 
         }
@@ -73,11 +72,6 @@ namespace com.voxelpixel.hannibal_ui.base_component
                 ObjectRectTransform.sizeDelta = new Vector2(width, ObjectRectTransform.sizeDelta.y);
             }
 
-        }
-
-        public void SetAnimationTime(float animationTime)
-        {
-            this.animationTime = animationTime;
         }
 
         public void SetHeight(float height, bool preserveAspect)

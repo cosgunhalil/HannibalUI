@@ -15,8 +15,6 @@ namespace com.voxelpixel.hannibal_ui.base_component
         protected Canvas panelCanvas;
         protected RectTransform panelRectTransform;
 
-        protected const float animationTime = .5f;
-
         protected virtual void RegisterEvents() { }
         protected virtual void UnRegisterEvents() { }
 
@@ -24,19 +22,9 @@ namespace com.voxelpixel.hannibal_ui.base_component
 
         public override void PreInit()
         {
-            SetAnimationTime(animationTime);
-
             for (int i = 0; i < uIObjects.Length; i++)
             {
                 uIObjects[i].PreInit();
-            }
-        }
-
-        private void SetAnimationTime(float animationTime)
-        {
-            for (int i = 0; i < uIObjects.Length; i++)
-            {
-                uIObjects[i].SetAnimationTime(animationTime);
             }
         }
 
@@ -62,63 +50,62 @@ namespace com.voxelpixel.hannibal_ui.base_component
             }
         }
 
-        public void Activate()
+        public void Activate(float activationTime)
         {
             if (panelCanvas.enabled)
             {
                 return;
             }
 
-            Activateimmediately();
+            Enable();
             StopCoroutine("DeactivateWithAnimation");
-            PlayActivateAnimations();
+            PlayActivateAnimations(activationTime);
         }
 
-        public void Activateimmediately() 
+        private void Enable() 
         {
             panelCanvas.enabled = true;
             panelCanvas.sortingOrder = 1;
         }
 
-        public void Deactivate()
+        public void Deactivate(float deactivationTime)
         {
             if (!panelCanvas.enabled)
             {
                 return;
             }
 
-            StartCoroutine("DeactivateWithAnimation");
+            StartCoroutine("DeactivateWithAnimation", deactivationTime);
         }
 
-        private IEnumerator DeactivateWithAnimation()
+        private IEnumerator DeactivateWithAnimation(float deactivationTime)
         {
-            PlayDeactivateAnimations();
+            PlayDeactivateAnimations(deactivationTime);
             panelCanvas.sortingOrder = 2;
-
-            yield return new WaitForSeconds(animationTime);
-            Deactivateimmediately();
+            yield return new WaitForSeconds(deactivationTime);
+            Disable();
         }
 
         //TODO: This function should not be public! Solve this issue!
-        public void Deactivateimmediately()
+        private void Disable()
         {
             panelCanvas.sortingOrder = 0;
             panelCanvas.enabled = false;
         }
 
-        public void PlayActivateAnimations()
+        public void PlayActivateAnimations(float activationTime)
         {
             foreach (var uiObject in uIObjects)
             {
-                uiObject.PlayActivateAnimation();
+                uiObject.PlayActivateAnimation(activationTime);
             }
         }
 
-        public void PlayDeactivateAnimations()
+        public void PlayDeactivateAnimations(float deactivationTime)
         {
             foreach (var uiObject in uIObjects)
             {
-                uiObject.PlayDeactivateAnimation();
+                uiObject.PlayDeactivateAnimation(deactivationTime);
             }
         }
 

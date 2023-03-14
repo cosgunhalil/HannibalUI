@@ -9,20 +9,19 @@ namespace com.voxelpixel.hannibal_ui.animation
 
         public float DeactivatedScale { get; set; }
 
-        public ScaleAnimationComponent(RectTransform objectRectTransform, float animationTime) : base(objectRectTransform, animationTime)
+        public ScaleAnimationComponent(RectTransform objectRectTransform) : base(objectRectTransform)
         {
             this.ObjectRectTransform = objectRectTransform;
-            this.AnimationTime = animationTime;
         }
 
-        public void PlayForward()
+        public void PlayForward(float animationTime)
         {
-            ObjectRectTransform.DOScale(ActivatedScale, AnimationTime).SetEase(AnimationEase);
+            ObjectRectTransform.DOScale(ActivatedScale, animationTime).SetEase(AnimationEase);
         }
 
-        public void PlayRewind()
+        public void PlayRewind(float animationTime)
         {
-            ObjectRectTransform.DOScale(DeactivatedScale, AnimationTime).SetEase(AnimationEase);
+            ObjectRectTransform.DOScale(DeactivatedScale, animationTime).SetEase(AnimationEase);
         }
     }
 }

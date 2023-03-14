@@ -8,22 +8,21 @@ namespace com.voxelpixel.hannibal_ui.animation
         public Vector2 ActivatedCoordinate { get; set; }
 
 
-        public MoveAnimationComponent(RectTransform objectRectTransform, float animationTime) : base(objectRectTransform, animationTime)
+        public MoveAnimationComponent(RectTransform objectRectTransform) : base(objectRectTransform)
         {
             this.ObjectRectTransform = objectRectTransform;
-            this.AnimationTime = animationTime;
         }
 
-        public void PlayForward()
+        public void PlayForward(float animationTime)
         {
             //TODO: use do anchor position!
-            ObjectRectTransform.DOMove(ActivatedCoordinate, AnimationTime).SetEase(Ease.InOutSine);
+            ObjectRectTransform.DOMove(ActivatedCoordinate, animationTime).SetEase(Ease.InOutSine);
         }
 
-        public void PlayRewind()
+        public void PlayRewind(float animationTime)
         {
             //TODO: use do anchor position!
-            ObjectRectTransform.DOMove(DeactivatedCoordinate, AnimationTime).SetEase(Ease.InOutSine);
+            ObjectRectTransform.DOMove(DeactivatedCoordinate, animationTime).SetEase(Ease.InOutSine);
         }
     }
 }

@@ -7,12 +7,10 @@ namespace com.voxelpixel.hannibal_ui.animation
         public Ease AnimationEase { get; set; }
 
         protected RectTransform ObjectRectTransform;
-        protected float AnimationTime;
 
-        public AnimationComponent(RectTransform objectRectTransform, float animationTime) 
+        public AnimationComponent(RectTransform objectRectTransform) 
         {
             this.ObjectRectTransform = objectRectTransform;
-            this.AnimationTime = animationTime;
         }
     }
 }

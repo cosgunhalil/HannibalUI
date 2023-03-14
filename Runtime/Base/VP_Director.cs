@@ -6,8 +6,8 @@ namespace com.voxelpixel.hannibal_ui.base_component
 
     public class VP_Director : MonoBehaviour
     {
-        [SerializeField]
-        private VP_Canvas[] canvases;//TODO: solve the order issue! Order is really important in here! 
+        private const float CANVAS_ACTIVATION_TIME = .5f;
+        [SerializeField]private VP_Canvas[] canvases;//TODO: solve the order issue! Order is really important in here! 
         private VP_Canvas activeCanvas = null;
 
         public void Awake()
@@ -18,17 +18,20 @@ namespace com.voxelpixel.hannibal_ui.base_component
             }
         }
 
-        public void Start()
+        public IEnumerator Start()
         {
             foreach (var canvas in canvases)
             {
                 canvas.Init();
                 canvas.LateInit();
-                canvas.Deactivateimmediately();
+                canvas.Deactivate(0);
             }
 
+            //TODO: Solve this work-around!
+            yield return new WaitForSeconds(0.01f);
+
             activeCanvas = canvases[(int)CanvasType.Main];
-            activeCanvas.Activate();
+            activeCanvas.Activate(0);
         }
 
         public void OnDestroy()
@@ -51,7 +54,7 @@ namespace com.voxelpixel.hannibal_ui.base_component
             if (activeCanvas == null)
             {
                 activeCanvas = targetCanvas;
-                activeCanvas.Activate();
+                activeCanvas.Activate(CANVAS_ACTIVATION_TIME);
                 return;
             }
 
@@ -69,13 +72,13 @@ namespace com.voxelpixel.hannibal_ui.base_component
         {
             if (activeCanvas != null)
             {
-                activeCanvas.Deactivate();
+                activeCanvas.Deactivate(CANVAS_ACTIVATION_TIME);
             }
 
-            yield return new WaitForSeconds(.5f);//TODO: We hate magic numbers!!!
+            yield return new WaitForSeconds(CANVAS_ACTIVATION_TIME);//TODO: We hate magic numbers!!!
 
             activeCanvas = targetCanvas;
-            activeCanvas.Activate();
+            activeCanvas.Activate(CANVAS_ACTIVATION_TIME);
         }
     }
 }
