@@ -3,7 +3,7 @@ namespace com.voxelpixel.hannibal_ui.base_component
     using System.Collections.Generic;
     using UnityEngine;
     using com.voxelpixel.hannibal_ui.animation;
-    public abstract class VP_UIObject : VP_UnitySceneObject
+    public class VP_UIObject : VP_UnitySceneObject
     {
         protected RectTransform ObjectRectTransform;
         protected List<IAnimable> AnimationComponents;
@@ -15,7 +15,7 @@ namespace com.voxelpixel.hannibal_ui.base_component
             ObjectRectTransform = GetComponent<RectTransform>();
         }
 
-        public abstract void Setup(Vector2 canvasSize);
+        public virtual void Setup(Vector2 canvasSize) { }
         public void PlayActivateAnimation(float activationTime) 
         {
             if (ObjectRectTransform == null) 

@@ -269,6 +269,7 @@ GameObject:
   - component: {fileID: 552874544}
   - component: {fileID: 552874546}
   - component: {fileID: 552874545}
+  - component: {fileID: 552874547}
   m_Layer: 5
   m_Name: Background
   m_TagString: Untagged
@@ -291,10 +292,10 @@ RectTransform:
   m_Father: {fileID: 1582441276}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 1920, y: 1080}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &552874545
 MonoBehaviour:
@@ -334,6 +335,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 552874543}
   m_CullTransparentMesh: 1
+--- !u!114 &552874547
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 552874543}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ef0a7b0f5e35ad44a206d10d8b35e61, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &631745475
 GameObject:
   m_ObjectHideFlags: 0
@@ -366,7 +379,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76398de7d4fd94de4847d7a575c32de4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  uIObjects: []
+  uIObjects:
+  - {fileID: 1076832444}
 --- !u!114 &631745477
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -792,6 +806,7 @@ GameObject:
   - component: {fileID: 1003423583}
   - component: {fileID: 1003423585}
   - component: {fileID: 1003423584}
+  - component: {fileID: 1003423586}
   m_Layer: 5
   m_Name: Background
   m_TagString: Untagged
@@ -814,10 +829,10 @@ RectTransform:
   m_Father: {fileID: 2100294802}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 1920, y: 1080}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1003423584
 MonoBehaviour:
@@ -857,6 +872,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1003423582}
   m_CullTransparentMesh: 1
+--- !u!114 &1003423586
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1003423582}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ef0a7b0f5e35ad44a206d10d8b35e61, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1076832440
 GameObject:
   m_ObjectHideFlags: 0
@@ -868,6 +895,7 @@ GameObject:
   - component: {fileID: 1076832441}
   - component: {fileID: 1076832443}
   - component: {fileID: 1076832442}
+  - component: {fileID: 1076832444}
   m_Layer: 5
   m_Name: Background
   m_TagString: Untagged
@@ -890,10 +918,10 @@ RectTransform:
   m_Father: {fileID: 631745480}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 1920, y: 1080}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1076832442
 MonoBehaviour:
@@ -933,6 +961,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1076832440}
   m_CullTransparentMesh: 1
+--- !u!114 &1076832444
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1076832440}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ef0a7b0f5e35ad44a206d10d8b35e61, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1563153431
 GameObject:
   m_ObjectHideFlags: 0
@@ -1096,7 +1136,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3ea53d6727d2c4e01837150154998c8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  uIObjects: []
+  uIObjects:
+  - {fileID: 552874547}
 --- !u!1 &1854050857
 GameObject:
   m_ObjectHideFlags: 0
@@ -1347,4 +1388,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 60910152c57f344a88ac16e96f0e15d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  uIObjects: []
+  uIObjects:
+  - {fileID: 1003423586}
