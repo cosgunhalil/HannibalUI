@@ -16,13 +16,13 @@ namespace com.voxelpixel.hannibal_ui.animation
         public void PlayForward(float animationTime)
         {
             //TODO: use do anchor position!
-            ObjectRectTransform.DOMove(ActivatedCoordinate, animationTime).SetEase(Ease.InOutSine);
+            ObjectRectTransform.DOAnchorPos(ActivatedCoordinate, animationTime).SetEase(Ease.InOutSine);
         }
 
         public void PlayRewind(float animationTime)
         {
             //TODO: use do anchor position!
-            ObjectRectTransform.DOMove(DeactivatedCoordinate, animationTime).SetEase(Ease.InOutSine);
+            ObjectRectTransform.DOAnchorPos(DeactivatedCoordinate, animationTime).SetEase(Ease.InOutSine);
         }
     }
 }

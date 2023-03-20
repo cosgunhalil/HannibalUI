@@ -1,4 +1,17 @@
 {
-	"name": "hannibal-runtime-assembly-definitions",
-	"references":[ "GUID:bd3d42bc79f1d40d5a8d69fd8b628bd2" ]
+    "name": "hannibal-runtime-assembly-definitions",
+    "rootNamespace": "",
+    "references": [
+        "GUID:bd3d42bc79f1d40d5a8d69fd8b628bd2",
+        "GUID:c7a5bca210a86cd47b1e797bec1e7bb0"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
 }

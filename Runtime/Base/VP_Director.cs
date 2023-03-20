@@ -18,20 +18,19 @@ namespace com.voxelpixel.hannibal_ui.base_component
             }
         }
 
-        public IEnumerator Start()
+        public void Start()
         {
             foreach (var canvas in canvases)
             {
                 canvas.Init();
-                canvas.LateInit();
-                canvas.Deactivate(0);
             }
 
-            //TODO: Solve this work-around!
-            yield return new WaitForSeconds(0.01f);
+            foreach (var canvas in canvases)
+            {
+                canvas.LateInit();
+            }
 
-            activeCanvas = canvases[(int)CanvasType.Main];
-            activeCanvas.Activate(0);
+            EnableCanvas(CanvasType.Main);
         }
 
         public void OnDestroy()

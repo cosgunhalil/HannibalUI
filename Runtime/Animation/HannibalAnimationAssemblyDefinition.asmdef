@@ -1,3 +1,16 @@
 {
-	"name": "HannibalAnimationAssemblyDefinition"
+    "name": "HannibalAnimationAssemblyDefinition",
+    "rootNamespace": "",
+    "references": [
+        "GUID:c7a5bca210a86cd47b1e797bec1e7bb0"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
 }

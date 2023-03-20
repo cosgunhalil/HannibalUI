@@ -18,10 +18,8 @@ namespace com.voxelpixel.hannibal_ui.sample
             MoveAnimationComponent moveAnimationComponent = new(ObjectRectTransform)
             {
                 AnimationEase = Ease.InOutSine,
-                ActivatedCoordinate = ObjectRectTransform.anchoredPosition,
-                DeactivatedCoordinate = new Vector2(
-                canvasSize.x * .5f + ObjectRectTransform.sizeDelta.x * .5f,
-                ObjectRectTransform.anchoredPosition.y)
+                ActivatedCoordinate = new Vector2(0, 0),
+                DeactivatedCoordinate = new Vector2(-canvasSize.x, 0)
             };
 
             AnimationComponents.Add(moveAnimationComponent);
