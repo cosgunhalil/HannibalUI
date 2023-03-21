@@ -14,6 +14,7 @@ namespace com.voxelpixel.hannibal_ui.base_component
         protected CanvasType canvasType;
         protected Canvas panelCanvas;
         protected RectTransform panelRectTransform;
+        protected Vector2 canvasSize;
 
         protected virtual void RegisterEvents() { }
         protected virtual void UnRegisterEvents() { }
@@ -33,7 +34,7 @@ namespace com.voxelpixel.hannibal_ui.base_component
             panelCanvas = GetComponent<Canvas>();
             panelRectTransform = GetComponent<RectTransform>();
             Setup();
-            var canvasSize = CanvasUtilities.GetCanvasSize(GetComponent<CanvasScaler>());
+            canvasSize = CanvasUtilities.GetCanvasSize(GetComponent<CanvasScaler>());
             foreach (var uiObject in uIObjects)
             {
                 uiObject.Init();
