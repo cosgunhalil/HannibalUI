@@ -1,9 +1,5 @@
 namespace com.voxelpixel.hannibal_ui.base_component 
 {
-    using System;
-    using System.Collections;
-    using System.Collections.Generic;
-    using System.Linq;
     using UnityEngine;
 
     [RequireComponent(typeof(RectTransform))]
@@ -19,15 +15,26 @@ namespace com.voxelpixel.hannibal_ui.base_component
             ObjectRectTransform.sizeDelta = size;
             _padding = padding;
             _spacing = spacing;
-            AllignChildren();
+            ResizeRects();
+            AllignRects();
         }
 
-        private void AllignChildren()
+        private void ResizeRects()
         {
             var childRectWidth = (ObjectRectTransform.sizeDelta.x - (_padding.Left + _padding.Right + (_spacing * (_rectTransforms.Length - 1)))) / _rectTransforms.Length;
             foreach (var rect in _rectTransforms)
             {
                 rect.sizeDelta = new Vector2(childRectWidth, ObjectRectTransform.sizeDelta.y - (_padding.Bottom + _padding.Top));
+            }
+        }
+
+        private void AllignRects()
+        {
+            var currentPosition = new Vector2(-ObjectRectTransform.sizeDelta.x * .5f + _padding.Left + _rectTransforms[0].sizeDelta.x * .5f, 0);
+            foreach (var rect in _rectTransforms) 
+            {
+                rect.anchoredPosition = currentPosition;
+                currentPosition.x += _spacing + rect.sizeDelta.x;
             }
         }
     }
