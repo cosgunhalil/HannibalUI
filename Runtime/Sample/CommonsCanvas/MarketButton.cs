@@ -1,18 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class MarketButton : MonoBehaviour
+namespace com.voxelpixel.hannibal_ui.sample 
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    using com.voxelpixel.hannibal_ui.base_component;
 
-    // Update is called once per frame
-    void Update()
+    public class MarketButton : VP_Button
     {
-        
+
     }
 }

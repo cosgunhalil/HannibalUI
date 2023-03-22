@@ -270,6 +270,7 @@ GameObject:
   - component: {fileID: 301504571}
   - component: {fileID: 301504570}
   - component: {fileID: 301504569}
+  - component: {fileID: 301504572}
   m_Layer: 5
   m_Name: MarketButton
   m_TagString: Untagged
@@ -380,6 +381,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 301504567}
   m_CullTransparentMesh: 1
+--- !u!114 &301504572
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 301504567}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8dad90f608806445a408c96fdc40a67, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &449527029
 GameObject:
   m_ObjectHideFlags: 0
@@ -392,6 +405,7 @@ GameObject:
   - component: {fileID: 449527033}
   - component: {fileID: 449527032}
   - component: {fileID: 449527031}
+  - component: {fileID: 449527034}
   m_Layer: 5
   m_Name: MainMenuButton
   m_TagString: Untagged
@@ -502,6 +516,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 449527029}
   m_CullTransparentMesh: 1
+--- !u!114 &449527034
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 449527029}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 781c867da59c9a041995a96af1c5b6ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &552874543
 GameObject:
   m_ObjectHideFlags: 0
@@ -1396,6 +1422,7 @@ GameObject:
   - component: {fileID: 1106642039}
   - component: {fileID: 1106642038}
   - component: {fileID: 1106642037}
+  - component: {fileID: 1106642040}
   m_Layer: 5
   m_Name: CharactersButton
   m_TagString: Untagged
@@ -1506,6 +1533,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1106642035}
   m_CullTransparentMesh: 1
+--- !u!114 &1106642040
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1106642035}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d456307e91091174bb21af02e056eb0b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1327971334
 GameObject:
   m_ObjectHideFlags: 0
@@ -2406,4 +2445,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   uIObjects:
   - {fileID: 1452853391}
+  - {fileID: 449527034}
+  - {fileID: 1106642040}
+  - {fileID: 301504572}
+  _mainMenuButton: {fileID: 449527034}
+  _charactersButton: {fileID: 1106642040}
+  _marketButton: {fileID: 301504572}
   _horizontalRectTransformContainer: {fileID: 1452853391}
