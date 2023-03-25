@@ -4,7 +4,7 @@ namespace com.voxelpixel.hannibal_ui.sample
     using System.Collections;
     using System.Collections.Generic;
     using UnityEngine;
-    using com.voxelpixel.hannibal_ui.base_component;
+    using HannibalUI.Runtime.Base;
 
 
     public class SampleApp : MonoBehaviour

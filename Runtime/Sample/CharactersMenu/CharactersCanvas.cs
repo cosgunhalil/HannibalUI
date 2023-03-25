@@ -1,7 +1,7 @@
 namespace com.voxelpixel.hannibal_ui.sample
 {
     using UnityEngine;
-    using com.voxelpixel.hannibal_ui.base_component;
+    using HannibalUI.Runtime.Base;
 
     public class CharactersCanvas : VP_Canvas
     {

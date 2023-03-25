@@ -4,7 +4,7 @@ namespace com.voxelpixel.hannibal_ui.element
     using UnityEngine;
     using UnityEngine.EventSystems;
     using UnityEngine.UI;
-    using com.voxelpixel.hannibal_ui.base_component;
+    using HannibalUI.Runtime.Base;
 
 
     [RequireComponent(typeof(Button))]

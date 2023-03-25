@@ -1,9 +1,11 @@
-namespace com.voxelpixel.hannibal_ui.base_component
+namespace HannibalUI.Runtime.Base
 {
     using System.Collections;
     using UnityEngine;
     using UnityEngine.UI;
     using com.voxelpixel.hannibal_ui.utils;
+    using System;
+    using HannibalUI.Runtime.Helpers.Observer;
 
     [RequireComponent(typeof(Canvas))]
     public abstract class VP_Canvas : VP_UnitySceneObject
@@ -21,12 +23,19 @@ namespace com.voxelpixel.hannibal_ui.base_component
 
         public abstract void Setup();
 
+        protected ISubject<VP_UIEvent> _eventBroadcaster;
+
         public override void PreInit()
         {
             for (int i = 0; i < uIObjects.Length; i++)
             {
                 uIObjects[i].PreInit();
             }
+        }
+
+        public void InjectSubject(ISubject<VP_UIEvent> subject)
+        {
+            _eventBroadcaster = subject;
         }
 
         public override void Init()

@@ -1,24 +1,27 @@
 //TODO: generate automatically! 
-namespace com.voxelpixel.hannibal_ui.base_component
+namespace HannibalUI.Runtime.Base
 {
     using HannibalUI.Runtime.Helpers.Observer;
     using System.Collections;
     using System.Collections.Generic;
     using UnityEngine;
 
-    public class VP_Director : MonoBehaviour, ISubject<UIEvent>
+    public class VP_Director : MonoBehaviour, IObserver<VP_UIEvent>
     {
         private const float CANVAS_ACTIVATION_TIME = .5f;
         [SerializeField]private VP_Canvas[] canvases;//TODO: solve the order issue! Order is really important in here! 
         private VP_Canvas activeCanvas = null;
-        private List<IObserver<UIEvent>> _observers;
+        private VP_EventBroadcaster _eventBroadcaster;
 
         public void Awake()
         {
+            _eventBroadcaster = new VP_EventBroadcaster();
+            _eventBroadcaster.Register(this);
 
             foreach (var canvas in canvases)
             {
                 canvas.PreInit();
+                canvas.InjectSubject(_eventBroadcaster);
             }
         }
 
@@ -43,6 +46,8 @@ namespace com.voxelpixel.hannibal_ui.base_component
             {
                 canvas.OnDestroyCalled();
             }
+
+            _eventBroadcaster.UnRegister(this);
         }
 
         public void EnableCanvas(CanvasType canvasType)
@@ -84,33 +89,19 @@ namespace com.voxelpixel.hannibal_ui.base_component
             activeCanvas.Activate(CANVAS_ACTIVATION_TIME);
         }
 
-        public void Register(IObserver<UIEvent> observer)
+        public void Notify(object sender, VP_UIEvent eventArgs)
         {
-            if (_observers.Contains(observer)) 
+            switch (eventArgs.GetEventType()) 
             {
-                Debug.LogWarning("This observer is already in the list!");
-                return;
-            }
-
-            _observers.Add(observer);
-        }
-
-        public void UnRegister(IObserver<UIEvent> observer)
-        {
-            if (!_observers.Contains(observer)) 
-            {
-                Debug.LogWarning("The observer you trying to unregister is already unregistered!");
-                return;
-            }
-
-            _observers.Remove(observer);
-        }
-
-        public void BroadcastEvent(UIEvent eventArgs)
-        {
-            for (int i = 0; i < _observers.Count; i++)
-            {
-                _observers[i].Notify(this, eventArgs);
+                case UIEvents.ON_CHARACTERS_BUTTON_CLICK:
+                    EnableCanvas(CanvasType.Characters);
+                    break;
+                case UIEvents.ON_MAIN_MENU_BUTTON_CLICK:
+                    EnableCanvas(CanvasType.Main);
+                    break;
+                case UIEvents.ON_MARKET_BUTTON_CLICK:
+                    EnableCanvas(CanvasType.Market);
+                    break;
             }
         }
     }

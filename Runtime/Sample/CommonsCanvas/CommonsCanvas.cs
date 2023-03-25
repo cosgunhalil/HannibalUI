@@ -1,6 +1,6 @@
 namespace com.voxelpixel.hannibal_ui.sample 
 {
-    using com.voxelpixel.hannibal_ui.base_component;
+    using HannibalUI.Runtime.Base;
     using UnityEngine;
 
     public class CommonsCanvas : VP_Canvas
@@ -20,17 +20,17 @@ namespace com.voxelpixel.hannibal_ui.sample
 
         private void MainMenuButton_OnPointerDownEvent()
         {
-            Debug.Log("CommonsCanvas::MainMenuButton_OnPointerDownEvent()");
+            _eventBroadcaster.BroadcastEvent(new VP_UIEvent(UIEvents.ON_MAIN_MENU_BUTTON_CLICK));
         }
 
         private void CharactersButton_OnPointerDownEvent()
         {
-            Debug.Log("CommonsCanvas::CharactersButton_OnPointerDownEvent()");
+            _eventBroadcaster.BroadcastEvent(new VP_UIEvent(UIEvents.ON_CHARACTERS_BUTTON_CLICK));
         }
 
         private void MarketButton_OnPointerDownEvent()
         {
-            Debug.Log("CommonsCanvas::MarketButton_OnPointerDownEvent()");
+            _eventBroadcaster.BroadcastEvent(new VP_UIEvent(UIEvents.ON_MARKET_BUTTON_CLICK));
         }
 
         public override void LateInit()

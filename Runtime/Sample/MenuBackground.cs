@@ -1,7 +1,7 @@
 namespace com.voxelpixel.hannibal_ui.sample 
 {
     using com.voxelpixel.hannibal_ui.animation;
-    using com.voxelpixel.hannibal_ui.base_component;
+    using HannibalUI.Runtime.Base;
     using DG.Tweening;
     using UnityEngine;
 

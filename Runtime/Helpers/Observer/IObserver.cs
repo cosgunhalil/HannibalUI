@@ -2,9 +2,9 @@ namespace HannibalUI.Runtime.Helpers.Observer
 {
     using System;
 
-    public interface IObserver<in T> where T : EventArgs
+    public interface IObserver<in TEventArgs> where TEventArgs : EventArgs
     {
-        void Notify(Object sender, T e);
+        void Notify(Object sender, TEventArgs eventArgs);
     }
 }
 

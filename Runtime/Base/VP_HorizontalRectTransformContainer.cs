@@ -1,4 +1,4 @@
-namespace com.voxelpixel.hannibal_ui.base_component 
+namespace HannibalUI.Runtime.Base 
 {
     using UnityEngine;
 

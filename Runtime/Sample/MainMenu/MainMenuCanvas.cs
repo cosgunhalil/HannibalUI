@@ -1,6 +1,6 @@
 namespace com.voxelpixel.hannibal_ui.sample
 {
-    using com.voxelpixel.hannibal_ui.base_component;
+    using HannibalUI.Runtime.Base;
     using UnityEngine;
 
     public class MainMenuCanvas : VP_Canvas
