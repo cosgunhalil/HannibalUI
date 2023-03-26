@@ -1,11 +1,11 @@
 {
-    "name": "HannibalUIBaseAssemblyDefinition",
+    "name": "SampleAssemblyDefinition",
     "rootNamespace": "",
     "references": [
+        "GUID:bd3d42bc79f1d40d5a8d69fd8b628bd2",
         "GUID:e323461e9af4c441e8a5a8d8f971ae3f",
-        "GUID:08c8f16522c5644f6b9c0c2f30dc8211",
         "GUID:2d948b0c6bb663346b3392c564167f99",
-        "GUID:f51ebe6a0ceec4240a699833d6309b23",
+        "GUID:a341688a5bfdf614f8785b7eaa5fc947",
         "GUID:245dcf7914075894c9c2fd8c87240cc0"
     ],
     "includePlatforms": [],

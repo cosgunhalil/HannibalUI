@@ -1,16 +1,16 @@
-
 namespace com.voxelpixel.hannibal_ui.sample
 {
     using System.Collections;
     using System.Collections.Generic;
     using UnityEngine;
     using HannibalUI.Runtime.Base;
-
+    using HannibalUI.Runtime.Helpers.Observer;
+    using HannibalUI.Runtime.Helpers.Memory;
 
     public class SampleApp : MonoBehaviour
     {
         private VP_Director director;
-        // Start is called before the first frame update
+
         private void Start()
         {
             director = GameObject.FindObjectOfType<VP_Director>();
@@ -29,11 +29,11 @@ namespace com.voxelpixel.hannibal_ui.sample
             {
                 director.EnableCanvas(CanvasType.Main);
             }
-            else if (Input.GetKeyDown(KeyCode.W)) 
+            else if (Input.GetKeyDown(KeyCode.W))
             {
                 director.EnableCanvas(CanvasType.Market);
             }
-            else if (Input.GetKeyDown(KeyCode.E)) 
+            else if (Input.GetKeyDown(KeyCode.E))
             {
                 director.EnableCanvas(CanvasType.Characters);
             }
