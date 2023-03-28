@@ -41,6 +41,10 @@ namespace HannibalUI.Runtime.Helpers.Memory
             if (_currentIndex == _pool.Length)
             {
                 Array.Resize(ref _pool, _pool.Length * 2);
+                for (int index = _currentIndex; index < _pool.Length; index++)
+                {
+                    _pool[index] = GenerateObject();
+                }
             }
 
             TObject tObject = _pool[_currentIndex];
