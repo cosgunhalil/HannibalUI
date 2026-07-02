@@ -1,10 +1,11 @@
 namespace HannibalUI.Runtime.Base
 {
-    using System.Collections;
+    using System;
+    using System.Threading;
+    using Cysharp.Threading.Tasks;
     using UnityEngine;
     using UnityEngine.UI;
     using com.voxelpixel.hannibal_ui.utils;
-    using System;
     using HannibalUI.Runtime.Helpers.Observer;
 
     [RequireComponent(typeof(Canvas))]
@@ -17,6 +18,7 @@ namespace HannibalUI.Runtime.Base
         protected Canvas panelCanvas;
         protected RectTransform panelRectTransform;
         protected Vector2 canvasSize;
+        private CancellationTokenSource _deactivationCts;
 
         protected virtual void RegisterEvents() { }
         protected virtual void UnRegisterEvents() { }
@@ -68,11 +70,11 @@ namespace HannibalUI.Runtime.Base
             }
 
             Enable();
-            StopCoroutine("DeactivateWithAnimation");
+            CancelPendingDeactivation();
             PlayActivateAnimations(activationTime);
         }
 
-        private void Enable() 
+        private void Enable()
         {
             panelCanvas.enabled = true;
             panelCanvas.sortingOrder = 1;
@@ -85,18 +87,35 @@ namespace HannibalUI.Runtime.Base
                 return;
             }
 
-            StartCoroutine("DeactivateWithAnimation", deactivationTime);
+            CancelPendingDeactivation();
+            _deactivationCts = new CancellationTokenSource();
+            DeactivateWithAnimationAsync(deactivationTime, _deactivationCts.Token);
         }
 
-        private IEnumerator DeactivateWithAnimation(float deactivationTime)
+        private async UniTaskVoid DeactivateWithAnimationAsync(float deactivationTime, CancellationToken cancellationToken)
         {
             PlayDeactivateAnimations(deactivationTime);
             panelCanvas.sortingOrder = 2;
-            yield return new WaitForSeconds(deactivationTime);
+
+            try
+            {
+                await UniTask.Delay(TimeSpan.FromSeconds(deactivationTime), cancellationToken: cancellationToken);
+            }
+            catch (OperationCanceledException)
+            {
+                return;
+            }
+
             Disable();
         }
 
-        //TODO: This function should not be public! Solve this issue!
+        private void CancelPendingDeactivation()
+        {
+            _deactivationCts?.Cancel();
+            _deactivationCts?.Dispose();
+            _deactivationCts = null;
+        }
+
         private void Disable()
         {
             panelCanvas.sortingOrder = 0;
@@ -121,6 +140,7 @@ namespace HannibalUI.Runtime.Base
 
         public void OnDestroyCalled()
         {
+            CancelPendingDeactivation();
             UnRegisterEvents();
 
             foreach (var uiObject in uIObjects)
