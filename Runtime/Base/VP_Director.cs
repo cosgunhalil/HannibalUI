@@ -8,7 +8,7 @@ namespace HannibalUI.Runtime.Base
     using Cysharp.Threading.Tasks;
     using UnityEngine;
 
-    public class VP_Director : MonoBehaviour, IObserver<VP_UIEvent>
+    public class VP_Director : MonoBehaviour, Helpers.Observer.IObserver<VP_UIEvent>
     {
         private const float CANVAS_ACTIVATION_TIME = .5f;
         [SerializeField]private VP_Canvas[] canvases;//TODO: solve the order issue! Order is really important in here!
