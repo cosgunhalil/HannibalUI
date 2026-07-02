@@ -211,8 +211,8 @@ HannibalUI uses [UniTask](https://github.com/Cysharp/UniTask) for anything that 
 - HannibalUI currently mixes two namespace styles — `HannibalUI.Runtime.Base` (dot-delimited,
   matches folder structure) and `com.voxelpixel.hannibal_ui.animation` (reverse-domain, lowercase
   with underscores). **New code should use the `HannibalUI.Runtime.<Folder>` dot-delimited
-  style** to match the majority of the codebase and the assembly layout described in
-  [CLAUDE.md](../../CLAUDE.md). Don't introduce further `com.voxelpixel.*`-style namespaces.
+  style** to match the majority of the codebase and the `Runtime/` assembly layout. Don't
+  introduce further `com.voxelpixel.*`-style namespaces.
 
 ## Formatting
 
@@ -273,8 +273,8 @@ public int MaxHealth => _maxHealth;
 - **Needless complexity / God objects** — e.g. don't let `VP_Director` grow beyond
   orchestrating canvases; push canvas-specific logic down into the `VP_Canvas` subclass.
 - **Duplicate logic** — check `Runtime/Base/VP_Button.cs` and `Runtime/UIElements/VP_Button.cs`
-  before adding new button behavior; these two near-identical classes are a known duplication
-  (see CLAUDE.md), not something to copy a third time.
+  before adding new button behavior; these two near-identical classes are a known duplication,
+  not something to copy a third time.
 - **Fragility from broken single-responsibility** — if a small change to one class requires
   touching several unrelated classes, that's a signal responsibilities are tangled.
 

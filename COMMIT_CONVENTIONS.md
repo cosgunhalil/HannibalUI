@@ -54,8 +54,7 @@ Only `feat` and `fix` carry SemVer meaning by default. Everything else is inform
 ## Scope
 
 Every commit should carry a scope: a lowercase, singular noun naming the part of the codebase
-it touches. Base it on the `Runtime/` folder structure described in
-[CLAUDE.md](../../CLAUDE.md#assembly-structure-assetshannibaluiruntime):
+it touches. Base it on the `Runtime/` folder structure:
 
 | Scope | Corresponds to |
 |---|---|
@@ -121,9 +120,8 @@ BREAKING CHANGE: VP_Director.EnableCanvas(int) has been removed. Callers
 must pass a CanvasType value instead.
 ```
 
-Since HannibalUI is consumed as a UPM package by other projects (see
-[CLAUDE.md](../../CLAUDE.md)), a `!` or `BREAKING CHANGE:` footer is the signal that
-`package.json`'s `version` needs a MAJOR bump.
+Since HannibalUI is consumed as a UPM package by other projects, a `!` or `BREAKING CHANGE:`
+footer is the signal that `package.json`'s `version` needs a MAJOR bump.
 
 ## Exceptions
 
