@@ -4,7 +4,8 @@
     "references": [
         "ObserverAssemblyDefinition",
         "ObjectPoolAssemblyDefinition",
-        "DOTween.Modules"
+        "DOTween.Modules",
+        "UniTask"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

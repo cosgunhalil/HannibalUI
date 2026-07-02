@@ -2,16 +2,19 @@
 namespace HannibalUI.Runtime.Base
 {
     using HannibalUI.Runtime.Helpers.Observer;
-    using System.Collections;
+    using System;
     using System.Collections.Generic;
+    using System.Threading;
+    using Cysharp.Threading.Tasks;
     using UnityEngine;
 
     public class VP_Director : MonoBehaviour, IObserver<VP_UIEvent>
     {
         private const float CANVAS_ACTIVATION_TIME = .5f;
-        [SerializeField]private VP_Canvas[] canvases;//TODO: solve the order issue! Order is really important in here! 
+        [SerializeField]private VP_Canvas[] canvases;//TODO: solve the order issue! Order is really important in here!
         private VP_Canvas activeCanvas = null;
         private VP_EventBroadcaster _eventBroadcaster;
+        private CancellationTokenSource _canvasSwitchCts;
 
         public void Awake()
         {
@@ -42,6 +45,9 @@ namespace HannibalUI.Runtime.Base
 
         public void OnDestroy()
         {
+            _canvasSwitchCts?.Cancel();
+            _canvasSwitchCts?.Dispose();
+
             foreach (var canvas in canvases)
             {
                 canvas.OnDestroyCalled();
@@ -71,19 +77,27 @@ namespace HannibalUI.Runtime.Base
                 return;
             }
 
-            //TODO: use Unitask instead of coroutine!
-            StopCoroutine("EnableRequestedCanvas");
-            StartCoroutine("EnableRequestedCanvas", targetCanvas);
+            _canvasSwitchCts?.Cancel();
+            _canvasSwitchCts?.Dispose();
+            _canvasSwitchCts = new CancellationTokenSource();
+            EnableRequestedCanvasAsync(targetCanvas, _canvasSwitchCts.Token);
         }
 
-        private IEnumerator EnableRequestedCanvas(VP_Canvas targetCanvas)
+        private async UniTaskVoid EnableRequestedCanvasAsync(VP_Canvas targetCanvas, CancellationToken cancellationToken)
         {
             if (activeCanvas != null)
             {
                 activeCanvas.Deactivate(CANVAS_ACTIVATION_TIME);
             }
 
-            yield return new WaitForSeconds(CANVAS_ACTIVATION_TIME);//TODO: We hate magic numbers!!!
+            try
+            {
+                await UniTask.Delay(TimeSpan.FromSeconds(CANVAS_ACTIVATION_TIME), cancellationToken: cancellationToken);
+            }
+            catch (OperationCanceledException)
+            {
+                return;
+            }
 
             activeCanvas = targetCanvas;
             activeCanvas.Activate(CANVAS_ACTIVATION_TIME);

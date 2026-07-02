@@ -155,6 +155,56 @@ public void OnDoorOpened()
 }
 ```
 
+## Asynchronous code
+
+HannibalUI uses [UniTask](https://github.com/Cysharp/UniTask) for anything that used to be a
+`MonoBehaviour` coroutine (waiting, sequencing, delayed activation). **Don't add new
+`StartCoroutine`/`IEnumerator` code** — `VP_Director.EnableRequestedCanvasAsync` and
+`VP_Canvas.DeactivateWithAnimationAsync` are the reference examples for the pattern below.
+
+- Fire-and-forget entry points (the direct replacement for what used to be a coroutine kicked
+  off from a non-async method) are `private async UniTaskVoid MethodNameAsync(...)`, called
+  without `await` from the sync method that starts them. Suffix these methods `Async`.
+- **Every `UniTaskVoid` method that can be cancelled takes a `CancellationToken` parameter** and
+  passes it into every `await` inside it (`UniTask.Delay(..., cancellationToken: token)`, etc.).
+  Don't write an async method with no way to cancel it.
+- The token comes from a `CancellationTokenSource` field owned by the class. Cancel *and*
+  dispose the previous one before creating a new one, so re-triggering the same operation (e.g.
+  calling `EnableCanvas` again mid-transition) cancels the in-flight run instead of letting two
+  overlapping runs race:
+
+  ```csharp
+  private CancellationTokenSource _myOperationCts;
+
+  public void StartMyOperation()
+  {
+      _myOperationCts?.Cancel();
+      _myOperationCts?.Dispose();
+      _myOperationCts = new CancellationTokenSource();
+      MyOperationAsync(_myOperationCts.Token);
+  }
+
+  private async UniTaskVoid MyOperationAsync(CancellationToken cancellationToken)
+  {
+      try
+      {
+          await UniTask.Delay(TimeSpan.FromSeconds(1f), cancellationToken: cancellationToken);
+      }
+      catch (OperationCanceledException)
+      {
+          return;
+      }
+
+      // ... continue only if not cancelled
+  }
+  ```
+- **Cancel (and dispose) the `CancellationTokenSource` in `OnDestroy`/`OnDestroyCalled`.** An
+  in-flight `UniTask` that outlives its owning `MonoBehaviour` is the async equivalent of a
+  coroutine leak.
+- Catch `OperationCanceledException` explicitly around the awaited call and `return` — don't let
+  it propagate unhandled just because UniTask usually logs it quietly. Being explicit makes the
+  cancel-and-bail-out path visible in the method body.
+
 ## Namespaces
 
 - PascalCase, no underscores.
@@ -210,11 +260,12 @@ public int MaxHealth => _maxHealth;
 - `/// <summary>` XML doc comments are fine on public methods where the intent isn't obvious
   from the signature.
 - Delete commented-out code — rely on git history instead.
-- Don't leave stale `TODO`s. The codebase currently has several (`//TODO: generate
-  automatically!` in `VP_UIEvents.cs`, `//TODO: solve the order issue!` in `VP_Director.cs`,
-  `//TODO: use Unitask instead of coroutine!`) — these are legitimate as long as they still
-  describe real, intended future work. Remove a `TODO` once it's done, or once you've decided
-  it's not actually going to happen.
+- Don't leave stale `TODO`s. The codebase currently has a couple left (`//TODO: generate
+  automatically!` in `VP_UIEvents.cs`, `//TODO: solve the order issue!` in `VP_Director.cs`) —
+  these are legitimate as long as they still describe real, intended future work. Remove a
+  `TODO` once it's done, or once you've decided it's not actually going to happen — the
+  `//TODO: use Unitask instead of coroutine!` that used to be here is a recent example: it was
+  deleted once `VP_Director`/`VP_Canvas` were migrated (see [Asynchronous code](#asynchronous-code)).
 - No attribution comments (`// added by X`) — that's what `git blame` is for.
 
 ## Common pitfalls to watch for
