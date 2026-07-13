@@ -1,9 +1,8 @@
-namespace HannibalUI.Runtime.Base 
+namespace HannibalUI.Runtime.Base
 {
-    using HannibalUI.Runtime.Helpers.Memory;
     using UnityEngine;
 
-    public class VP_Popup : MonoBehaviour, IPoolable
+    public class VP_Popup : MonoBehaviour
     {
         public void Activate()
         {
@@ -14,11 +13,5 @@ namespace HannibalUI.Runtime.Base
         {
             gameObject.SetActive(false);
         }
-
-        public void Initialize()
-        {
-
-        }
     }
 }
-

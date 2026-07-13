@@ -1,30 +1,24 @@
-//TODO: generate automatically! 
+//TODO: generate automatically!
 namespace HannibalUI.Runtime.Base
 {
-    using HannibalUI.Runtime.Helpers.Observer;
     using System;
-    using System.Collections.Generic;
     using System.Threading;
     using Cysharp.Threading.Tasks;
     using UnityEngine;
 
-    public class VP_Director : MonoBehaviour, Helpers.Observer.IObserver<VP_UIEvent>
+    public class VP_Director : MonoBehaviour
     {
         private const float CANVAS_ACTIVATION_TIME = .5f;
-        [SerializeField]private VP_Canvas[] canvases;//TODO: solve the order issue! Order is really important in here!
+        [SerializeField] private VP_Canvas[] canvases; //TODO: solve the order issue! Order is really important in here!
         private VP_Canvas activeCanvas = null;
-        private VP_EventBroadcaster _eventBroadcaster;
         private CancellationTokenSource _canvasSwitchCts;
 
         public void Awake()
         {
-            _eventBroadcaster = new VP_EventBroadcaster();
-            _eventBroadcaster.Register(this);
-
             foreach (var canvas in canvases)
             {
                 canvas.PreInit();
-                canvas.InjectSubject(_eventBroadcaster);
+                canvas.UIEventRaised += HandleUIEvent;
             }
         }
 
@@ -50,10 +44,9 @@ namespace HannibalUI.Runtime.Base
 
             foreach (var canvas in canvases)
             {
+                canvas.UIEventRaised -= HandleUIEvent;
                 canvas.OnDestroyCalled();
             }
-
-            _eventBroadcaster.UnRegister(this);
         }
 
         public void EnableCanvas(CanvasType canvasType)
@@ -72,7 +65,7 @@ namespace HannibalUI.Runtime.Base
                 return;
             }
 
-            if (activeCanvas == targetCanvas) 
+            if (activeCanvas == targetCanvas)
             {
                 return;
             }
@@ -103,9 +96,9 @@ namespace HannibalUI.Runtime.Base
             activeCanvas.Activate(CANVAS_ACTIVATION_TIME);
         }
 
-        public void Notify(object sender, VP_UIEvent eventArgs)
+        private void HandleUIEvent(UIEvents uiEvent)
         {
-            switch (eventArgs.GetEventType()) 
+            switch (uiEvent)
             {
                 case UIEvents.ON_CHARACTERS_BUTTON_CLICK:
                     EnableCanvas(CanvasType.Characters);

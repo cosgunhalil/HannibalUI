@@ -2,8 +2,6 @@
     "name": "hannibal-runtime-assembly-definitions",
     "rootNamespace": "",
     "references": [
-        "ObserverAssemblyDefinition",
-        "ObjectPoolAssemblyDefinition",
         "DOTween.Modules",
         "UniTask"
     ],

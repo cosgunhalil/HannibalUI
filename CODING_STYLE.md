@@ -47,8 +47,8 @@ Hungarian notation (`int iCounter`, `string strName`) is not used.
 - **`private` is implicit and may be omitted** at field/method scope for brevity (as the
   existing code already does). Be consistent within a file: don't mix explicit and implicit
   `private` in the same class.
-- **Use `var`** when the type is obvious from the right-hand side (`var pool = new
-  ObjectPool<VP_Popup>(10, prefab);`). Avoid it when the return type isn't clear from context
+- **Use `var`** when the type is obvious from the right-hand side (`var entry = new
+  EventTrigger.Entry();`). Avoid it when the return type isn't clear from context
   (`var result = SomeFactory.Create();`).
 
 ```csharp
@@ -95,7 +95,7 @@ public enum PointerStates
 
 - PascalCase noun or noun phrase for class names (`VP_Director`, not `VP_Direct`).
 - One `MonoBehaviour` per file, and the file name must match the class name.
-- Prefix interfaces with `I` followed by an adjective (`IAnimable`, `IPoolable`, `IObserver<T>`).
+- Prefix interfaces with `I` followed by an adjective (`IAnimable`, `IKillable`).
 - **Keep classes small and single-responsibility.** If a `VP_Canvas` subclass starts handling
   input, animation timing, *and* network calls, split it — see `Runtime/Helpers/` for the
   existing pattern of pulling reusable, non-Unity-dependent logic into its own small assembly.
@@ -136,13 +136,14 @@ public interface IKillable
 
 ## Events
 
-HannibalUI has its own typed observer system (`ISubject<T>`/`IObserver<T>`,
-`VP_EventBroadcaster`, `VP_UIEvent`) rather than raw C# events — follow that pattern for
-UI-level state changes. For plain C# events elsewhere in the codebase:
+HannibalUI uses plain C# `event Action` / `Action<T>` delegates for UI-level state changes —
+e.g. `VP_Canvas` exposes `public event Action<UIEvents> UIEventRaised` and `VP_Director`
+subscribes to it. The old `ISubject<T>`/`IObserver<T>` observer system was removed and Unity's
+`UnityEvent` is not used — don't reintroduce a hand-rolled observer. Conventions for C# events:
 
 - Name the event with a verb phrase, present or past participle for before/after:
   `DoorOpening` / `DoorOpened`.
-- Prefix the event-raising method with `On`: `OnDoorOpened()`.
+- Prefix the event-raising method with `On` or `Raise`: `OnDoorOpened()`, `RaiseUIEvent(...)`.
 - Use `System.Action` / `Action<T>` for the delegate type unless you need multiple named
   parameters, in which case define a small custom `EventArgs`-derived struct.
 
@@ -210,7 +211,7 @@ HannibalUI uses [UniTask](https://github.com/Cysharp/UniTask) for anything that 
 - PascalCase, no underscores.
 - All runtime code uses the `HannibalUI.Runtime.<Folder>` dot-delimited style, matching the
   `Runtime/` folder/assembly layout (`HannibalUI.Runtime.Base`, `.Animation`, `.Utilities`,
-  `.UIElements`, `.Helpers.Observer`, `.Helpers.Memory`). The old reverse-domain
+  `.UIElements`). The old reverse-domain
   `com.voxelpixel.hannibal_ui.*` C# namespaces were migrated away — **don't reintroduce them.**
   This is separate from the UPM package id `com.voxelpixel.hannibal-ui` in `package.json`, which
   stays as-is.

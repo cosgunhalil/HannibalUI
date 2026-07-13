@@ -6,7 +6,6 @@ namespace HannibalUI.Runtime.Base
     using UnityEngine;
     using UnityEngine.UI;
     using HannibalUI.Runtime.Utilities;
-    using HannibalUI.Runtime.Helpers.Observer;
 
     [RequireComponent(typeof(Canvas))]
     public abstract class VP_Canvas : VP_UnitySceneObject
@@ -25,7 +24,7 @@ namespace HannibalUI.Runtime.Base
 
         public abstract void Setup();
 
-        protected ISubject<VP_UIEvent> _eventBroadcaster;
+        public event Action<UIEvents> UIEventRaised;
 
         public override void PreInit()
         {
@@ -35,9 +34,9 @@ namespace HannibalUI.Runtime.Base
             }
         }
 
-        public void InjectSubject(ISubject<VP_UIEvent> subject)
+        protected void RaiseUIEvent(UIEvents uiEvent)
         {
-            _eventBroadcaster = subject;
+            UIEventRaised?.Invoke(uiEvent);
         }
 
         public override void Init()

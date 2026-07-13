@@ -61,8 +61,6 @@ it touches. Base it on the `Runtime/` folder structure:
 | `base` | `Runtime/Base/` (`VP_Director`, `VP_Canvas`, `VP_UIObject`, events, ...) |
 | `popup` | `Runtime/Base/PopupSystem/` |
 | `animation` | `Runtime/Animation/` |
-| `pool` | `Runtime/Helpers/ObjectPool/` |
-| `observer` | `Runtime/Helpers/Observer/` |
 | `elements` | `Runtime/UIElements/` |
 | `utils` | `Runtime/Utilities/` |
 | `test` | `Tests/Runtime/` |
