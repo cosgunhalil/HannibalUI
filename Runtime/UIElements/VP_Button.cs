@@ -1,4 +1,4 @@
-namespace com.voxelpixel.hannibal_ui.element
+namespace HannibalUI.Runtime.UIElements
 {
     using System;
     using UnityEngine;
@@ -6,39 +6,31 @@ namespace com.voxelpixel.hannibal_ui.element
     using UnityEngine.UI;
     using HannibalUI.Runtime.Base;
 
-
     [RequireComponent(typeof(Button))]
     public class VP_Button : VP_UIObject
     {
-        public delegate void MessageAction();
-        public event MessageAction OnPointerDownEvent;
-        public event MessageAction OnPointerUpEvent;
-        public event MessageAction OnPointerEnterEvent;
-        public event MessageAction OnPointerExitEvent;
+        public event Action OnPointerDownEvent;
+        public event Action OnPointerUpEvent;
+        public event Action OnPointerEnterEvent;
+        public event Action OnPointerExitEvent;
 
-        protected float localScaleTemp;
-        protected Button button;
-        private EventTrigger eventTrigger;
-
-        private const float touchAnimationTime = .05f;
-        private const float sizeDivisionConst = .9f;
+        protected Button _button;
+        private EventTrigger _eventTrigger;
 
         public override void Init()
         {
             base.Init();
-            button = GetComponent<Button>();
-            localScaleTemp = transform.localScale.x;
-
+            _button = GetComponent<Button>();
             SetEventTrigger();
             SetupButtonActions();
         }
 
         private void SetEventTrigger()
         {
-            eventTrigger = gameObject.GetComponent<EventTrigger>();
-            if (eventTrigger == null)
+            _eventTrigger = gameObject.GetComponent<EventTrigger>();
+            if (_eventTrigger == null)
             {
-                eventTrigger = gameObject.AddComponent<EventTrigger>();
+                _eventTrigger = gameObject.AddComponent<EventTrigger>();
             }
         }
 
@@ -52,34 +44,22 @@ namespace com.voxelpixel.hannibal_ui.element
 
         protected virtual void OnPointerDown()
         {
-            if (OnPointerDownEvent != null)
-            {
-                OnPointerDownEvent();
-            }
+            OnPointerDownEvent?.Invoke();
         }
 
         protected virtual void OnPointerUp()
         {
-            if (OnPointerUpEvent != null)
-            {
-                OnPointerUpEvent();
-            }
+            OnPointerUpEvent?.Invoke();
         }
 
         protected virtual void OnPointerEnter()
         {
-            if (OnPointerEnterEvent != null)
-            {
-                OnPointerEnterEvent();
-            }
+            OnPointerEnterEvent?.Invoke();
         }
 
         protected virtual void OnPointerExit()
         {
-            if (OnPointerExitEvent != null)
-            {
-                OnPointerExitEvent();
-            }
+            OnPointerExitEvent?.Invoke();
         }
 
         private void AddActionToButton(EventTriggerType eventTriggerType, Action action)
@@ -89,12 +69,7 @@ namespace com.voxelpixel.hannibal_ui.element
                 eventID = eventTriggerType
             };
             entry.callback.AddListener((e) => { action(); });
-            eventTrigger.triggers.Add(entry);
+            _eventTrigger.triggers.Add(entry);
         }
-
-        public override void Setup(Vector2 canvasSize)
-        {
-            
-        }
-    }    
+    }
 }

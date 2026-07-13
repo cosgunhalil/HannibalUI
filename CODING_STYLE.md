@@ -208,11 +208,12 @@ HannibalUI uses [UniTask](https://github.com/Cysharp/UniTask) for anything that 
 ## Namespaces
 
 - PascalCase, no underscores.
-- HannibalUI currently mixes two namespace styles — `HannibalUI.Runtime.Base` (dot-delimited,
-  matches folder structure) and `com.voxelpixel.hannibal_ui.animation` (reverse-domain, lowercase
-  with underscores). **New code should use the `HannibalUI.Runtime.<Folder>` dot-delimited
-  style** to match the majority of the codebase and the `Runtime/` assembly layout. Don't
-  introduce further `com.voxelpixel.*`-style namespaces.
+- All runtime code uses the `HannibalUI.Runtime.<Folder>` dot-delimited style, matching the
+  `Runtime/` folder/assembly layout (`HannibalUI.Runtime.Base`, `.Animation`, `.Utilities`,
+  `.UIElements`, `.Helpers.Observer`, `.Helpers.Memory`). The old reverse-domain
+  `com.voxelpixel.hannibal_ui.*` C# namespaces were migrated away — **don't reintroduce them.**
+  This is separate from the UPM package id `com.voxelpixel.hannibal-ui` in `package.json`, which
+  stays as-is.
 
 ## Formatting
 
@@ -272,9 +273,9 @@ public int MaxHealth => _maxHealth;
 
 - **Needless complexity / God objects** — e.g. don't let `VP_Director` grow beyond
   orchestrating canvases; push canvas-specific logic down into the `VP_Canvas` subclass.
-- **Duplicate logic** — check `Runtime/Base/VP_Button.cs` and `Runtime/UIElements/VP_Button.cs`
-  before adding new button behavior; these two near-identical classes are a known duplication,
-  not something to copy a third time.
+- **Duplicate logic** — there is one `VP_Button` (`Runtime/UIElements/VP_Button.cs`); extend it
+  or subclass it rather than copying a second button implementation. It was recently consolidated
+  from two near-identical classes, so resist the urge to reintroduce a parallel one.
 - **Fragility from broken single-responsibility** — if a small change to one class requires
   touching several unrelated classes, that's a signal responsibilities are tangled.
 

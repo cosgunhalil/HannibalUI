@@ -1,6 +1,6 @@
 using DG.Tweening;
 
-namespace com.voxelpixel.hannibal_ui.animation
+namespace HannibalUI.Runtime.Animation
 {
     using UnityEngine;
     public class MoveAnimationComponent : AnimationComponent, IAnimable

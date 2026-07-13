@@ -2,7 +2,7 @@ namespace HannibalUI.Runtime.Base
 {
     using System.Collections.Generic;
     using UnityEngine;
-    using com.voxelpixel.hannibal_ui.animation;
+    using HannibalUI.Runtime.Animation;
     public class VP_UIObject : VP_UnitySceneObject
     {
         protected RectTransform ObjectRectTransform;

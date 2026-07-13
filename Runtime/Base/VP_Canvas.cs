@@ -5,7 +5,7 @@ namespace HannibalUI.Runtime.Base
     using Cysharp.Threading.Tasks;
     using UnityEngine;
     using UnityEngine.UI;
-    using com.voxelpixel.hannibal_ui.utils;
+    using HannibalUI.Runtime.Utilities;
     using HannibalUI.Runtime.Helpers.Observer;
 
     [RequireComponent(typeof(Canvas))]

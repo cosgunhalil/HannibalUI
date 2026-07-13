@@ -1,4 +1,4 @@
-namespace com.voxelpixel.hannibal_ui.animation
+namespace HannibalUI.Runtime.Animation
 {
     using UnityEngine;
     using DG.Tweening;

@@ -52,6 +52,19 @@ namespace HannibalUI.Tests.Runtime
                 objectPool.Release(obj);
             }
         }
+
+        [Test]
+        public void ReleaseMoreThanGetDoesNotCorruptPool()
+        {
+            PoolableTestObject obj = objectPool.Get();
+            objectPool.Release(obj);
+
+            LogAssert.Expect(LogType.Warning, "Release was called more times than Get; ignoring to avoid corrupting the pool.");
+            Assert.DoesNotThrow(() => objectPool.Release(obj));
+
+            PoolableTestObject next = objectPool.Get();
+            Assert.IsTrue(next.IsActive());
+        }
     }
 
     public class PoolableTestObject : MonoBehaviour, IPoolable

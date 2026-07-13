@@ -67,7 +67,7 @@ it touches. Base it on the `Runtime/` folder structure:
 | `utils` | `Runtime/Utilities/` |
 | `test` | `Tests/Runtime/` |
 | `package` | `package.json`, `.asmdef` files, package-level metadata |
-| `sample` | Sample/demo scripts (`RuntimeSampleSciprt.cs` and similar) |
+| `sample` | Sample/demo scripts under `Runtime/` or a `Samples~/` folder |
 
 The existing history is inconsistent about pluralization (`helper` vs. `helpers`) and has scopes
 that don't map to a folder (`config`, `core`, `git`, `setup`, `name`, `reference`, `typo`). Don't

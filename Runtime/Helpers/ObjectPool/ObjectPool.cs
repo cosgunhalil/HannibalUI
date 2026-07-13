@@ -56,6 +56,18 @@ namespace HannibalUI.Runtime.Helpers.Memory
 
         public void Release(TObject obj)
         {
+            if (obj is null)
+            {
+                Debug.LogWarning("Attempted to release a null object to the pool; ignoring.");
+                return;
+            }
+
+            if (_currentIndex == 0)
+            {
+                Debug.LogWarning("Release was called more times than Get; ignoring to avoid corrupting the pool.");
+                return;
+            }
+
             obj.Deactivate();
             _currentIndex--;
             _pool[_currentIndex] = obj;
