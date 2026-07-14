@@ -6,13 +6,24 @@ namespace HannibalUI.Runtime.Base
     public class VP_UIObject : VP_UnitySceneObject
     {
         protected RectTransform ObjectRectTransform;
-        protected List<IAnimable> AnimationComponents;
-        private float animationTime;
+
+        [SerializeReference]
+        [SerializeField]
+        protected List<AnimationComponent> _animationComponents = new List<AnimationComponent>();
 
         public override void Init()
         {
-            AnimationComponents = new List<IAnimable>();
             ObjectRectTransform = GetComponent<RectTransform>();
+
+            if (_animationComponents == null)
+            {
+                _animationComponents = new List<AnimationComponent>();
+            }
+
+            foreach (var animationComponent in _animationComponents)
+            {
+                animationComponent?.Bind(ObjectRectTransform);
+            }
         }
 
         public virtual void Setup(Vector2 canvasSize) { }
@@ -24,7 +35,7 @@ namespace HannibalUI.Runtime.Base
                 return;
             }
 
-            foreach (var animationComponent in AnimationComponents)
+            foreach (var animationComponent in _animationComponents)
             {
                 animationComponent.PlayForward(activationTime);
             }
@@ -38,7 +49,7 @@ namespace HannibalUI.Runtime.Base
                 return;
             }
 
-            foreach (var animationComponent in AnimationComponents)
+            foreach (var animationComponent in _animationComponents)
             {
                 animationComponent.PlayRewind(deactivationTime);
             }

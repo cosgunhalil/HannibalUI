@@ -1,29 +1,23 @@
-using DG.Tweening;
-
 namespace HannibalUI.Runtime.Animation
 {
+    using System;
+    using DG.Tweening;
     using UnityEngine;
-    public class MoveAnimationComponent : AnimationComponent, IAnimable
+
+    [Serializable]
+    public class MoveAnimationComponent : AnimationComponent
     {
-        public Vector2 DeactivatedCoordinate { get; set; }
-        public Vector2 ActivatedCoordinate { get; set; }
+        [SerializeField] private Vector2 _activatedCoordinate;
+        [SerializeField] private Vector2 _deactivatedCoordinate;
 
-
-        public MoveAnimationComponent(RectTransform objectRectTransform) : base(objectRectTransform)
+        public override void PlayForward(float activationTime)
         {
-            this.ObjectRectTransform = objectRectTransform;
+            _rectTransform.DOAnchorPos(_activatedCoordinate, activationTime).SetEase(AnimationEase);
         }
 
-        public void PlayForward(float animationTime)
+        public override void PlayRewind(float deactivationTime)
         {
-            ObjectRectTransform.DOAnchorPos(ActivatedCoordinate, animationTime).SetEase(Ease.InOutSine);
-        }
-
-        public void PlayRewind(float animationTime)
-        {
-            ObjectRectTransform.DOAnchorPos(DeactivatedCoordinate, animationTime).SetEase(Ease.InOutSine);
+            _rectTransform.DOAnchorPos(_deactivatedCoordinate, deactivationTime).SetEase(AnimationEase);
         }
     }
 }
-
-

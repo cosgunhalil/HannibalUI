@@ -1,16 +1,30 @@
 namespace HannibalUI.Runtime.Animation
 {
+    using System;
     using DG.Tweening;
     using UnityEngine;
-    public class AnimationComponent 
+
+    /// <summary>
+    /// Base for Inspector-authorable UI animations. Concrete subclasses are stored on a
+    /// <c>VP_UIObject</c> via a <c>[SerializeReference]</c> list; the owning object injects the
+    /// target <see cref="RectTransform"/> at init through <see cref="Bind"/> (it can't be a
+    /// serialized field because it's a live scene reference, not authoring data).
+    /// </summary>
+    [Serializable]
+    public abstract class AnimationComponent : IAnimable
     {
-        public Ease AnimationEase { get; set; }
+        [SerializeField] private Ease _ease = Ease.InOutSine;
 
-        protected RectTransform ObjectRectTransform;
+        protected RectTransform _rectTransform;
 
-        public AnimationComponent(RectTransform objectRectTransform) 
+        protected Ease AnimationEase => _ease;
+
+        public void Bind(RectTransform rectTransform)
         {
-            this.ObjectRectTransform = objectRectTransform;
+            _rectTransform = rectTransform;
         }
+
+        public abstract void PlayForward(float activationTime);
+        public abstract void PlayRewind(float deactivationTime);
     }
 }

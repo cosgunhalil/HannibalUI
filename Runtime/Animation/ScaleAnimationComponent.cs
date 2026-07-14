@@ -1,28 +1,23 @@
 namespace HannibalUI.Runtime.Animation
 {
-    using UnityEngine;
+    using System;
     using DG.Tweening;
+    using UnityEngine;
 
-    public class ScaleAnimationComponent : AnimationComponent, IAnimable
+    [Serializable]
+    public class ScaleAnimationComponent : AnimationComponent
     {
-        public float ActivatedScale { get; set; }
+        [SerializeField] private float _activatedScale = 1f;
+        [SerializeField] private float _deactivatedScale;
 
-        public float DeactivatedScale { get; set; }
-
-        public ScaleAnimationComponent(RectTransform objectRectTransform) : base(objectRectTransform)
+        public override void PlayForward(float activationTime)
         {
-            this.ObjectRectTransform = objectRectTransform;
+            _rectTransform.DOScale(_activatedScale, activationTime).SetEase(AnimationEase);
         }
 
-        public void PlayForward(float animationTime)
+        public override void PlayRewind(float deactivationTime)
         {
-            ObjectRectTransform.DOScale(ActivatedScale, animationTime).SetEase(AnimationEase);
-        }
-
-        public void PlayRewind(float animationTime)
-        {
-            ObjectRectTransform.DOScale(DeactivatedScale, animationTime).SetEase(AnimationEase);
+            _rectTransform.DOScale(_deactivatedScale, deactivationTime).SetEase(AnimationEase);
         }
     }
 }
-
