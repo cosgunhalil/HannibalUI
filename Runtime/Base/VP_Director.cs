@@ -1,6 +1,7 @@
 //TODO: generate automatically!
 namespace HannibalUI.Runtime.Base
 {
+    using System.Collections.Generic;
     using UnityEngine;
 
     public class VP_Director : MonoBehaviour
@@ -15,12 +16,21 @@ namespace HannibalUI.Runtime.Base
 
         public VP_NavigationService Navigation => _navigation;
 
+        // Overridden by generated directors so routes/start screen come from the UI config
+        // instead of Inspector wiring. Defaults keep a hand-authored director working.
+        protected virtual CanvasType StartScreen => default;
+
+        protected virtual IReadOnlyList<NavRoute> GetRoutes()
+        {
+            return routes;
+        }
+
         public void Awake()
         {
             _registry = new VP_ScreenRegistry(canvases);
             var popupManager = popupLayer != null ? new VP_PopupManager(popupLayer) : null;
             _navigation = new VP_NavigationService(_registry, CANVAS_ACTIVATION_TIME, popupManager);
-            _router = new VP_UIEventRouter(_navigation, routes);
+            _router = new VP_UIEventRouter(_navigation, GetRoutes());
 
             foreach (var canvas in canvases)
             {
@@ -41,7 +51,7 @@ namespace HannibalUI.Runtime.Base
                 canvas.LateInit();
             }
 
-            _navigation.Show(CanvasType.Main);
+            _navigation.Show(StartScreen);
         }
 
         public void OnDestroy()
