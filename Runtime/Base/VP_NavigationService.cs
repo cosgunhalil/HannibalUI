@@ -16,14 +16,16 @@ namespace HannibalUI.Runtime.Base
     {
         private readonly VP_ScreenRegistry _registry;
         private readonly float _transitionDuration;
+        private readonly VP_PopupManager _popups;
         private readonly List<CanvasType> _stack = new List<CanvasType>();
         private IScreen _activeScreen;
         private CancellationTokenSource _transitionCts;
 
-        public VP_NavigationService(VP_ScreenRegistry registry, float transitionDuration)
+        public VP_NavigationService(VP_ScreenRegistry registry, float transitionDuration, VP_PopupManager popups = null)
         {
             _registry = registry;
             _transitionDuration = transitionDuration;
+            _popups = popups;
         }
 
         public IScreen ActiveScreen => _activeScreen;
@@ -92,11 +94,29 @@ namespace HannibalUI.Runtime.Base
             TransitionTo(screenType);
         }
 
+        /// <summary>Show a popup on the modal layer above the active screen, without deactivating it.</summary>
+        public VP_Popup ShowPopup(VP_Popup prefab)
+        {
+            if (_popups == null)
+            {
+                Debug.LogError("VP_NavigationService: no popup layer configured on the director.");
+                return null;
+            }
+
+            return _popups.Show(prefab);
+        }
+
+        public void HidePopup(VP_Popup popup)
+        {
+            _popups?.Hide(popup);
+        }
+
         public void Dispose()
         {
             _transitionCts?.Cancel();
             _transitionCts?.Dispose();
             _transitionCts = null;
+            _popups?.Dispose();
         }
 
         private void TransitionTo(CanvasType screenType)

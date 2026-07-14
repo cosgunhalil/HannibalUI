@@ -8,6 +8,7 @@ namespace HannibalUI.Runtime.Base
         private const float CANVAS_ACTIVATION_TIME = .5f;
         [SerializeField] private VP_Canvas[] canvases; // Order-independent: resolved by ScreenType through the registry.
         [SerializeField] private NavRoute[] routes;    // UI event -> navigation action; hand-authored now, generated in Phase 2.
+        [SerializeField] private Transform popupLayer; // Canvas layer (higher sorting) that popups render on; optional.
         private VP_ScreenRegistry _registry;
         private VP_NavigationService _navigation;
         private VP_UIEventRouter _router;
@@ -17,7 +18,8 @@ namespace HannibalUI.Runtime.Base
         public void Awake()
         {
             _registry = new VP_ScreenRegistry(canvases);
-            _navigation = new VP_NavigationService(_registry, CANVAS_ACTIVATION_TIME);
+            var popupManager = popupLayer != null ? new VP_PopupManager(popupLayer) : null;
+            _navigation = new VP_NavigationService(_registry, CANVAS_ACTIVATION_TIME, popupManager);
             _router = new VP_UIEventRouter(_navigation, routes);
 
             foreach (var canvas in canvases)
