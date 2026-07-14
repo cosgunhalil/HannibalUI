@@ -66,7 +66,7 @@ namespace HannibalUI.Runtime.Base
                 createFunc: () => CreatePopup(prefab, pool),
                 actionOnGet: popup => popup.Activate(),
                 actionOnRelease: popup => popup.Deactivate(),
-                actionOnDestroy: popup => Object.Destroy(popup.gameObject),
+                actionOnDestroy: popup => UnityEngine.Object.Destroy(popup.gameObject),
                 collectionCheck: true,
                 defaultCapacity: _defaultCapacity,
                 maxSize: _maxSize);
@@ -77,7 +77,7 @@ namespace HannibalUI.Runtime.Base
 
         private VP_Popup CreatePopup(VP_Popup prefab, IObjectPool<VP_Popup> pool)
         {
-            var popup = Object.Instantiate(prefab, _layer);
+            var popup = UnityEngine.Object.Instantiate(prefab, _layer);
             popup.SetPool(pool);
             popup.Deactivate();
             return popup;
