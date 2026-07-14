@@ -1,9 +1,6 @@
 //TODO: generate automatically!
 namespace HannibalUI.Runtime.Base
 {
-    using System;
-    using System.Threading;
-    using Cysharp.Threading.Tasks;
     using UnityEngine;
 
     public class VP_Director : MonoBehaviour
@@ -11,12 +8,14 @@ namespace HannibalUI.Runtime.Base
         private const float CANVAS_ACTIVATION_TIME = .5f;
         [SerializeField] private VP_Canvas[] canvases; // Order-independent: resolved by ScreenType through the registry.
         private VP_ScreenRegistry _registry;
-        private IScreen activeScreen = null;
-        private CancellationTokenSource _canvasSwitchCts;
+        private VP_NavigationService _navigation;
+
+        public VP_NavigationService Navigation => _navigation;
 
         public void Awake()
         {
             _registry = new VP_ScreenRegistry(canvases);
+            _navigation = new VP_NavigationService(_registry, CANVAS_ACTIVATION_TIME);
 
             foreach (var canvas in canvases)
             {
@@ -37,13 +36,12 @@ namespace HannibalUI.Runtime.Base
                 canvas.LateInit();
             }
 
-            EnableCanvas(CanvasType.Main);
+            _navigation.Show(CanvasType.Main);
         }
 
         public void OnDestroy()
         {
-            _canvasSwitchCts?.Cancel();
-            _canvasSwitchCts?.Dispose();
+            _navigation.Dispose();
 
             foreach (var canvas in canvases)
             {
@@ -54,39 +52,7 @@ namespace HannibalUI.Runtime.Base
 
         public void EnableCanvas(CanvasType canvasType)
         {
-            if (!_registry.TryGet(canvasType, out var targetScreen))
-            {
-                Debug.LogError($"VP_Director: no screen registered for '{canvasType}'.");
-                return;
-            }
-
-            if (ReferenceEquals(activeScreen, targetScreen))
-            {
-                return;
-            }
-
-            _canvasSwitchCts?.Cancel();
-            _canvasSwitchCts?.Dispose();
-            _canvasSwitchCts = new CancellationTokenSource();
-            SwitchScreenAsync(targetScreen, _canvasSwitchCts.Token);
-        }
-
-        private async UniTaskVoid SwitchScreenAsync(IScreen targetScreen, CancellationToken cancellationToken)
-        {
-            try
-            {
-                if (activeScreen != null)
-                {
-                    await activeScreen.DeactivateAsync(CANVAS_ACTIVATION_TIME, cancellationToken);
-                }
-
-                activeScreen = targetScreen;
-                await targetScreen.ActivateAsync(CANVAS_ACTIVATION_TIME, cancellationToken);
-            }
-            catch (OperationCanceledException)
-            {
-                // Superseded by a newer switch; that switch now owns the active-screen state.
-            }
+            _navigation.Show(canvasType);
         }
 
         private void HandleUIEvent(UIEvents uiEvent)
