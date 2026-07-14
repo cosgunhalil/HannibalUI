@@ -21,6 +21,7 @@ namespace HannibalUI.Editor
         private NavigationFlowView _flowView;
         private Label _statusLabel;
         private Button _generateButton;
+        private Label _generateSummary;
 
         [MenuItem("HannibalUI/UI Editor")]
         public static void Open()
@@ -53,14 +54,19 @@ namespace HannibalUI.Editor
             configField.RegisterValueChangedCallback(evt => SetConfig(evt.newValue as UIProjectConfig));
             root.Add(configField);
 
-            _body = new VisualElement { style = { marginTop = 6f, flexGrow = 1f } };
-            root.Add(_body);
+            var scroll = new ScrollView { style = { flexGrow = 1f } };
+            _body = new VisualElement { style = { marginTop = 6f } };
+            scroll.Add(_body);
+            root.Add(scroll);
 
             _statusLabel = new Label { style = { whiteSpace = WhiteSpace.Normal, marginTop = 6f, marginBottom = 6f } };
             root.Add(_statusLabel);
 
             _generateButton = new Button(OnGenerate) { text = "Generate" };
             root.Add(_generateButton);
+
+            _generateSummary = new Label { style = { whiteSpace = WhiteSpace.Normal, marginTop = 4f } };
+            root.Add(_generateSummary);
 
             SetConfig(_config);
         }
@@ -175,22 +181,7 @@ namespace HannibalUI.Editor
 
         private List<string> ScreenNames()
         {
-            var names = new List<string>();
-
-            if (_config == null)
-            {
-                return names;
-            }
-
-            foreach (var screen in _config.Screens)
-            {
-                if (!screen.IsPopup && !string.IsNullOrWhiteSpace(screen.Name))
-                {
-                    names.Add(screen.Name);
-                }
-            }
-
-            return names;
+            return ConfigQueries.NonPopupScreenNames(_config);
         }
 
         private void UpdateStatus()
@@ -228,8 +219,29 @@ namespace HannibalUI.Editor
                 return;
             }
 
-            UICodeGenerator.Generate(_config);
+            var result = UICodeGenerator.Generate(_config);
+
+            _generateSummary.text = result.Success
+                ? $"Generated: {result.Created} created, {result.Overwritten} overwritten, {result.Skipped} skipped."
+                : "Generation failed — see the status above and the Console.";
+
+            if (result.Success)
+            {
+                PingGenerated();
+            }
+
             UpdateStatus();
+        }
+
+        private void PingGenerated()
+        {
+            var path = System.IO.Path.Combine(_config.GeneratedFolder, "VP_GeneratedDirector.g.cs");
+            var asset = AssetDatabase.LoadMainAssetAtPath(path);
+
+            if (asset != null)
+            {
+                EditorGUIUtility.PingObject(asset);
+            }
         }
     }
 }

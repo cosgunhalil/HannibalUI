@@ -1,5 +1,7 @@
 namespace HannibalUI.Editor.CodeGen
 {
+    using System;
+    using System.Collections.Generic;
     using System.IO;
     using UnityEditor;
     using UnityEngine;
@@ -9,6 +11,24 @@ namespace HannibalUI.Editor.CodeGen
     /// generator-owned files (enums + director), writes screen stubs only when absent, removes the
     /// legacy hand-written enums the generator now owns, and refreshes the AssetDatabase.
     /// </summary>
+    public readonly struct GenerationResult
+    {
+        public readonly bool Success;
+        public readonly int Created;
+        public readonly int Overwritten;
+        public readonly int Skipped;
+        public readonly IReadOnlyList<string> Errors;
+
+        public GenerationResult(bool success, int created, int overwritten, int skipped, IReadOnlyList<string> errors)
+        {
+            Success = success;
+            Created = created;
+            Overwritten = overwritten;
+            Skipped = skipped;
+            Errors = errors;
+        }
+    }
+
     public static class UICodeGenerator
     {
         private const string GeneratedFileExtension = ".g.cs";
@@ -34,14 +54,14 @@ namespace HannibalUI.Editor.CodeGen
             Generate(config);
         }
 
-        public static void Generate(UIProjectConfig config)
+        public static GenerationResult Generate(UIProjectConfig config)
         {
             var errors = ConfigValidator.Validate(config);
 
             if (errors.Count > 0)
             {
                 Debug.LogError("HannibalUI generation aborted:\n - " + string.Join("\n - ", errors));
-                return;
+                return new GenerationResult(false, 0, 0, 0, errors);
             }
 
             int created = 0;
@@ -81,6 +101,8 @@ namespace HannibalUI.Editor.CodeGen
 
             Debug.Log($"HannibalUI generation complete: {created} created, {overwritten} overwritten, " +
                       $"{skipped} stub(s) skipped (already present).");
+
+            return new GenerationResult(true, created, overwritten, skipped, Array.Empty<string>());
         }
 
         private static string GeneratedPath(UIProjectConfig config, string typeName)
