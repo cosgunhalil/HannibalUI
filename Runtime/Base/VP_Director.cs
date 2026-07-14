@@ -7,8 +7,10 @@ namespace HannibalUI.Runtime.Base
     {
         private const float CANVAS_ACTIVATION_TIME = .5f;
         [SerializeField] private VP_Canvas[] canvases; // Order-independent: resolved by ScreenType through the registry.
+        [SerializeField] private NavRoute[] routes;    // UI event -> navigation action; hand-authored now, generated in Phase 2.
         private VP_ScreenRegistry _registry;
         private VP_NavigationService _navigation;
+        private VP_UIEventRouter _router;
 
         public VP_NavigationService Navigation => _navigation;
 
@@ -16,6 +18,7 @@ namespace HannibalUI.Runtime.Base
         {
             _registry = new VP_ScreenRegistry(canvases);
             _navigation = new VP_NavigationService(_registry, CANVAS_ACTIVATION_TIME);
+            _router = new VP_UIEventRouter(_navigation, routes);
 
             foreach (var canvas in canvases)
             {
@@ -57,18 +60,7 @@ namespace HannibalUI.Runtime.Base
 
         private void HandleUIEvent(UIEvents uiEvent)
         {
-            switch (uiEvent)
-            {
-                case UIEvents.ON_CHARACTERS_BUTTON_CLICK:
-                    EnableCanvas(CanvasType.Characters);
-                    break;
-                case UIEvents.ON_MAIN_MENU_BUTTON_CLICK:
-                    EnableCanvas(CanvasType.Main);
-                    break;
-                case UIEvents.ON_MARKET_BUTTON_CLICK:
-                    EnableCanvas(CanvasType.Market);
-                    break;
-            }
+            _router.Handle(uiEvent);
         }
     }
 }
