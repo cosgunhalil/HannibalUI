@@ -18,6 +18,7 @@ namespace HannibalUI.Editor
 
         private SerializedObject _serializedConfig;
         private VisualElement _body;
+        private NavigationFlowView _flowView;
         private Label _statusLabel;
         private Button _generateButton;
 
@@ -80,7 +81,22 @@ namespace HannibalUI.Editor
             {
                 _body.Add(BuildScreensSection(_serializedConfig));
                 _body.Add(BuildTransitionsSection(_serializedConfig));
-                _body.TrackSerializedObjectValue(_serializedConfig, _ => UpdateStatus());
+
+                var flowHeader = new Label("Flow") { style = { unityFontStyleAndWeight = FontStyle.Bold, marginTop = 6f } };
+                _body.Add(flowHeader);
+                _flowView = new NavigationFlowView();
+                _body.Add(_flowView);
+                _flowView.Rebuild(_config);
+
+                _body.TrackSerializedObjectValue(_serializedConfig, _ =>
+                {
+                    UpdateStatus();
+                    _flowView.Rebuild(_config);
+                });
+            }
+            else
+            {
+                _flowView = null;
             }
 
             UpdateStatus();
