@@ -63,7 +63,8 @@ it touches. Base it on the `Runtime/` folder structure:
 | `animation` | `Runtime/Animation/` |
 | `elements` | `Runtime/UIElements/` |
 | `utils` | `Runtime/Utilities/` |
-| `test` | `Tests/Runtime/` |
+| `editor` | `Editor/` (UIProjectConfig, code generation) |
+| `test` | `Tests/Runtime/`, `Tests/Editor/` |
 | `package` | `package.json`, `.asmdef` files, package-level metadata |
 | `sample` | Sample/demo scripts under `Runtime/` or a `Samples~/` folder |
 
