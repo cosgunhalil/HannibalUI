@@ -7,14 +7,16 @@ namespace HannibalUI.Editor
     using HannibalUI.Editor.CodeGen;
 
     /// <summary>
-    /// The HannibalUI authoring window: pick a UIProjectConfig, see its validation status, and
-    /// generate code. Screen/transition editing and the flow diagram are added by later tasks.
+    /// The HannibalUI authoring window: pick a UIProjectConfig, edit its screens, see validation
+    /// status, and generate code. Transition editing and the flow diagram are added by later tasks.
     /// </summary>
     public class HannibalUIEditorWindow : EditorWindow
     {
         [SerializeField]
         private UIProjectConfig _config;
 
+        private SerializedObject _serializedConfig;
+        private VisualElement _body;
         private Label _statusLabel;
         private Button _generateButton;
 
@@ -23,7 +25,7 @@ namespace HannibalUI.Editor
         {
             var window = GetWindow<HannibalUIEditorWindow>();
             window.titleContent = new GUIContent("HannibalUI");
-            window.minSize = new Vector2(360f, 240f);
+            window.minSize = new Vector2(360f, 320f);
         }
 
         private void CreateGUI()
@@ -46,12 +48,11 @@ namespace HannibalUI.Editor
                 allowSceneObjects = false,
                 value = _config
             };
-            configField.RegisterValueChangedCallback(evt =>
-            {
-                _config = evt.newValue as UIProjectConfig;
-                Refresh();
-            });
+            configField.RegisterValueChangedCallback(evt => SetConfig(evt.newValue as UIProjectConfig));
             root.Add(configField);
+
+            _body = new VisualElement { style = { marginTop = 6f, flexGrow = 1f } };
+            root.Add(_body);
 
             _statusLabel = new Label { style = { whiteSpace = WhiteSpace.Normal, marginTop = 6f, marginBottom = 6f } };
             root.Add(_statusLabel);
@@ -59,10 +60,47 @@ namespace HannibalUI.Editor
             _generateButton = new Button(OnGenerate) { text = "Generate" };
             root.Add(_generateButton);
 
-            Refresh();
+            SetConfig(_config);
         }
 
-        private void Refresh()
+        private void SetConfig(UIProjectConfig config)
+        {
+            _config = config;
+            _serializedConfig = _config != null ? new SerializedObject(_config) : null;
+
+            if (_body == null)
+            {
+                return;
+            }
+
+            _body.Clear();
+
+            if (_serializedConfig != null)
+            {
+                _body.Add(BuildScreensSection(_serializedConfig));
+                _body.TrackSerializedObjectValue(_serializedConfig, _ => UpdateStatus());
+            }
+
+            UpdateStatus();
+        }
+
+        private static VisualElement BuildScreensSection(SerializedObject serializedConfig)
+        {
+            var list = new ListView
+            {
+                showFoldoutHeader = true,
+                headerTitle = "Screens",
+                showAddRemoveFooter = true,
+                reorderable = true,
+                showBoundCollectionSize = false,
+                virtualizationMethod = CollectionVirtualizationMethod.DynamicHeight,
+                bindingPath = "_screens"
+            };
+            list.Bind(serializedConfig);
+            return list;
+        }
+
+        private void UpdateStatus()
         {
             if (_statusLabel == null)
             {
@@ -98,7 +136,7 @@ namespace HannibalUI.Editor
             }
 
             UICodeGenerator.Generate(_config);
-            Refresh();
+            UpdateStatus();
         }
     }
 }
