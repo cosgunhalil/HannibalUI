@@ -1,5 +1,6 @@
 namespace HannibalUI.Editor
 {
+    using System.Collections.Generic;
     using UnityEditor;
     using UnityEditor.UIElements;
     using UnityEngine;
@@ -78,6 +79,7 @@ namespace HannibalUI.Editor
             if (_serializedConfig != null)
             {
                 _body.Add(BuildScreensSection(_serializedConfig));
+                _body.Add(BuildTransitionsSection(_serializedConfig));
                 _body.TrackSerializedObjectValue(_serializedConfig, _ => UpdateStatus());
             }
 
@@ -98,6 +100,81 @@ namespace HannibalUI.Editor
             };
             list.Bind(serializedConfig);
             return list;
+        }
+
+        private VisualElement BuildTransitionsSection(SerializedObject serializedConfig)
+        {
+            var transitionsProp = serializedConfig.FindProperty("_transitions");
+
+            var list = new ListView
+            {
+                showFoldoutHeader = true,
+                headerTitle = "Transitions",
+                showAddRemoveFooter = true,
+                reorderable = true,
+                showBoundCollectionSize = false,
+                virtualizationMethod = CollectionVirtualizationMethod.DynamicHeight,
+                bindingPath = "_transitions"
+            };
+
+            // A single value-changed callback per row (registered here, not in bindItem) reads the
+            // current property from userData, so recycled rows never stack stale callbacks.
+            list.makeItem = () =>
+            {
+                var row = new VisualElement();
+                row.style.marginBottom = 4f;
+                row.style.paddingBottom = 4f;
+                row.Add(new PropertyField { name = "event" });
+                row.Add(new PropertyField { name = "action" });
+
+                var target = new DropdownField("Target") { name = "target" };
+                target.RegisterValueChangedCallback(evt =>
+                {
+                    if (target.userData is SerializedProperty targetProp)
+                    {
+                        targetProp.stringValue = evt.newValue;
+                        targetProp.serializedObject.ApplyModifiedProperties();
+                    }
+                });
+                row.Add(target);
+                return row;
+            };
+
+            list.bindItem = (element, index) =>
+            {
+                var elementProp = transitionsProp.GetArrayElementAtIndex(index);
+                element.Q<PropertyField>("event").BindProperty(elementProp.FindPropertyRelative("EventName"));
+                element.Q<PropertyField>("action").BindProperty(elementProp.FindPropertyRelative("Action"));
+
+                var target = element.Q<DropdownField>("target");
+                var targetProp = elementProp.FindPropertyRelative("TargetScreen");
+                target.userData = targetProp;
+                target.choices = ScreenNames();
+                target.SetValueWithoutNotify(targetProp.stringValue);
+            };
+
+            list.Bind(serializedConfig);
+            return list;
+        }
+
+        private List<string> ScreenNames()
+        {
+            var names = new List<string>();
+
+            if (_config == null)
+            {
+                return names;
+            }
+
+            foreach (var screen in _config.Screens)
+            {
+                if (!screen.IsPopup && !string.IsNullOrWhiteSpace(screen.Name))
+                {
+                    names.Add(screen.Name);
+                }
+            }
+
+            return names;
         }
 
         private void UpdateStatus()
