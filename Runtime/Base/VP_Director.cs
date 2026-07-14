@@ -9,12 +9,15 @@ namespace HannibalUI.Runtime.Base
     public class VP_Director : MonoBehaviour
     {
         private const float CANVAS_ACTIVATION_TIME = .5f;
-        [SerializeField] private VP_Canvas[] canvases; //TODO: solve the order issue! Order is really important in here!
+        [SerializeField] private VP_Canvas[] canvases; // Order-independent: resolved by ScreenType through the registry.
+        private VP_ScreenRegistry _registry;
         private IScreen activeScreen = null;
         private CancellationTokenSource _canvasSwitchCts;
 
         public void Awake()
         {
+            _registry = new VP_ScreenRegistry(canvases);
+
             foreach (var canvas in canvases)
             {
                 canvas.PreInit();
@@ -51,12 +54,11 @@ namespace HannibalUI.Runtime.Base
 
         public void EnableCanvas(CanvasType canvasType)
         {
-            if (canvases.Length == 0)
+            if (!_registry.TryGet(canvasType, out var targetScreen))
             {
+                Debug.LogError($"VP_Director: no screen registered for '{canvasType}'.");
                 return;
             }
-
-            IScreen targetScreen = canvases[(int)canvasType];
 
             if (ReferenceEquals(activeScreen, targetScreen))
             {
