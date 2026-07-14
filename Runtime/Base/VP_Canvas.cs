@@ -8,23 +8,25 @@ namespace HannibalUI.Runtime.Base
     using HannibalUI.Runtime.Utilities;
 
     [RequireComponent(typeof(Canvas))]
-    public abstract class VP_Canvas : VP_UnitySceneObject
+    public abstract class VP_Canvas : VP_UnitySceneObject, IScreen
     {
+        [SerializeField]
+        private CanvasType _canvasType;
         [SerializeField]
         protected VP_UIObject[] uIObjects;
 
-        protected CanvasType canvasType;
         protected Canvas panelCanvas;
         protected RectTransform panelRectTransform;
         protected Vector2 canvasSize;
-        private CancellationTokenSource _deactivationCts;
+
+        public CanvasType ScreenType => _canvasType;
+
+        public event Action<UIEvents> UIEventRaised;
 
         protected virtual void RegisterEvents() { }
         protected virtual void UnRegisterEvents() { }
 
         public abstract void Setup();
-
-        public event Action<UIEvents> UIEventRaised;
 
         public override void PreInit()
         {
@@ -32,11 +34,6 @@ namespace HannibalUI.Runtime.Base
             {
                 uIObjects[i].PreInit();
             }
-        }
-
-        protected void RaiseUIEvent(UIEvents uiEvent)
-        {
-            UIEventRaised?.Invoke(uiEvent);
         }
 
         public override void Init()
@@ -61,7 +58,7 @@ namespace HannibalUI.Runtime.Base
             }
         }
 
-        public void Activate(float activationTime)
+        public async UniTask ActivateAsync(float duration, CancellationToken cancellationToken)
         {
             if (panelCanvas.enabled)
             {
@@ -69,8 +66,53 @@ namespace HannibalUI.Runtime.Base
             }
 
             Enable();
-            CancelPendingDeactivation();
-            PlayActivateAnimations(activationTime);
+            PlayActivateAnimations(duration);
+
+            try
+            {
+                await UniTask.Delay(TimeSpan.FromSeconds(duration), cancellationToken: cancellationToken);
+            }
+            catch (OperationCanceledException)
+            {
+                // Superseded mid-transition; the screen stays enabled for whoever took over.
+            }
+        }
+
+        public async UniTask DeactivateAsync(float duration, CancellationToken cancellationToken)
+        {
+            if (!panelCanvas.enabled)
+            {
+                return;
+            }
+
+            PlayDeactivateAnimations(duration);
+            panelCanvas.sortingOrder = 2;
+
+            try
+            {
+                await UniTask.Delay(TimeSpan.FromSeconds(duration), cancellationToken: cancellationToken);
+            }
+            catch (OperationCanceledException)
+            {
+                return; // Re-activated mid-transition; leave the canvas visible.
+            }
+
+            Disable();
+        }
+
+        public void TearDown()
+        {
+            UnRegisterEvents();
+
+            foreach (var uiObject in uIObjects)
+            {
+                uiObject.OnUIObjectDestroy();
+            }
+        }
+
+        protected void RaiseUIEvent(UIEvents uiEvent)
+        {
+            UIEventRaised?.Invoke(uiEvent);
         }
 
         private void Enable()
@@ -79,49 +121,13 @@ namespace HannibalUI.Runtime.Base
             panelCanvas.sortingOrder = 1;
         }
 
-        public void Deactivate(float deactivationTime)
-        {
-            if (!panelCanvas.enabled)
-            {
-                return;
-            }
-
-            CancelPendingDeactivation();
-            _deactivationCts = new CancellationTokenSource();
-            DeactivateWithAnimationAsync(deactivationTime, _deactivationCts.Token);
-        }
-
-        private async UniTaskVoid DeactivateWithAnimationAsync(float deactivationTime, CancellationToken cancellationToken)
-        {
-            PlayDeactivateAnimations(deactivationTime);
-            panelCanvas.sortingOrder = 2;
-
-            try
-            {
-                await UniTask.Delay(TimeSpan.FromSeconds(deactivationTime), cancellationToken: cancellationToken);
-            }
-            catch (OperationCanceledException)
-            {
-                return;
-            }
-
-            Disable();
-        }
-
-        private void CancelPendingDeactivation()
-        {
-            _deactivationCts?.Cancel();
-            _deactivationCts?.Dispose();
-            _deactivationCts = null;
-        }
-
         private void Disable()
         {
             panelCanvas.sortingOrder = 0;
             panelCanvas.enabled = false;
         }
 
-        public void PlayActivateAnimations(float activationTime)
+        private void PlayActivateAnimations(float activationTime)
         {
             foreach (var uiObject in uIObjects)
             {
@@ -129,25 +135,12 @@ namespace HannibalUI.Runtime.Base
             }
         }
 
-        public void PlayDeactivateAnimations(float deactivationTime)
+        private void PlayDeactivateAnimations(float deactivationTime)
         {
             foreach (var uiObject in uIObjects)
             {
                 uiObject.PlayDeactivateAnimation(deactivationTime);
             }
         }
-
-        public void OnDestroyCalled()
-        {
-            CancelPendingDeactivation();
-            UnRegisterEvents();
-
-            foreach (var uiObject in uIObjects)
-            {
-                uiObject.OnUIObjectDestroy();
-            }
-        }
     }
 }
-
-

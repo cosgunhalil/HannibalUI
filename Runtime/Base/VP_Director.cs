@@ -10,7 +10,7 @@ namespace HannibalUI.Runtime.Base
     {
         private const float CANVAS_ACTIVATION_TIME = .5f;
         [SerializeField] private VP_Canvas[] canvases; //TODO: solve the order issue! Order is really important in here!
-        private VP_Canvas activeCanvas = null;
+        private IScreen activeScreen = null;
         private CancellationTokenSource _canvasSwitchCts;
 
         public void Awake()
@@ -45,7 +45,7 @@ namespace HannibalUI.Runtime.Base
             foreach (var canvas in canvases)
             {
                 canvas.UIEventRaised -= HandleUIEvent;
-                canvas.OnDestroyCalled();
+                canvas.TearDown();
             }
         }
 
@@ -56,16 +56,9 @@ namespace HannibalUI.Runtime.Base
                 return;
             }
 
-            var targetCanvas = canvases[(int)canvasType];
+            IScreen targetScreen = canvases[(int)canvasType];
 
-            if (activeCanvas == null)
-            {
-                activeCanvas = targetCanvas;
-                activeCanvas.Activate(CANVAS_ACTIVATION_TIME);
-                return;
-            }
-
-            if (activeCanvas == targetCanvas)
+            if (ReferenceEquals(activeScreen, targetScreen))
             {
                 return;
             }
@@ -73,27 +66,25 @@ namespace HannibalUI.Runtime.Base
             _canvasSwitchCts?.Cancel();
             _canvasSwitchCts?.Dispose();
             _canvasSwitchCts = new CancellationTokenSource();
-            EnableRequestedCanvasAsync(targetCanvas, _canvasSwitchCts.Token);
+            SwitchScreenAsync(targetScreen, _canvasSwitchCts.Token);
         }
 
-        private async UniTaskVoid EnableRequestedCanvasAsync(VP_Canvas targetCanvas, CancellationToken cancellationToken)
+        private async UniTaskVoid SwitchScreenAsync(IScreen targetScreen, CancellationToken cancellationToken)
         {
-            if (activeCanvas != null)
-            {
-                activeCanvas.Deactivate(CANVAS_ACTIVATION_TIME);
-            }
-
             try
             {
-                await UniTask.Delay(TimeSpan.FromSeconds(CANVAS_ACTIVATION_TIME), cancellationToken: cancellationToken);
+                if (activeScreen != null)
+                {
+                    await activeScreen.DeactivateAsync(CANVAS_ACTIVATION_TIME, cancellationToken);
+                }
+
+                activeScreen = targetScreen;
+                await targetScreen.ActivateAsync(CANVAS_ACTIVATION_TIME, cancellationToken);
             }
             catch (OperationCanceledException)
             {
-                return;
+                // Superseded by a newer switch; that switch now owns the active-screen state.
             }
-
-            activeCanvas = targetCanvas;
-            activeCanvas.Activate(CANVAS_ACTIVATION_TIME);
         }
 
         private void HandleUIEvent(UIEvents uiEvent)
