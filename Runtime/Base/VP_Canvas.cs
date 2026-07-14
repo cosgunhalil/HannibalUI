@@ -19,7 +19,7 @@ namespace HannibalUI.Runtime.Base
         protected RectTransform panelRectTransform;
         protected Vector2 canvasSize;
 
-        public CanvasType ScreenType => _canvasType;
+        public virtual CanvasType ScreenType => _canvasType;
 
         public event Action<UIEvents> UIEventRaised;
 

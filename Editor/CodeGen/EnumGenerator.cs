@@ -18,6 +18,11 @@ namespace HannibalUI.Editor.CodeGen
 
             foreach (var screen in config.Screens)
             {
+                if (screen.IsPopup)
+                {
+                    continue; // popups live on the modal layer, not in the screen registry/enum.
+                }
+
                 members.Add(IdentifierUtility.ToPascalCase(screen.Name));
             }
 
