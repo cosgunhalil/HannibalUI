@@ -1,11 +1,13 @@
 namespace HannibalUI.Editor
 {
+    using System.Collections.Generic;
     using UnityEditor;
     using UnityEditor.SceneManagement;
     using UnityEngine;
     using UnityEngine.EventSystems;
     using UnityEngine.SceneManagement;
     using UnityEngine.UI;
+    using HannibalUI.Editor.CodeGen;
     using HannibalUI.Runtime.Base;
 
     /// <summary>
@@ -58,18 +60,45 @@ namespace HannibalUI.Editor
             var popupLayer = EnsurePopupLayer();
 
             var serializedDirector = new SerializedObject(director);
+
             var popupLayerProperty = serializedDirector.FindProperty("popupLayer");
             if (popupLayerProperty != null)
             {
                 popupLayerProperty.objectReferenceValue = popupLayer.transform;
-                serializedDirector.ApplyModifiedProperties();
             }
+
+            var canvasComponents = new List<Component>();
+            foreach (var screen in config.Screens)
+            {
+                if (screen.IsPopup)
+                {
+                    continue;
+                }
+
+                var canvasComponent = CreateOrReuseScreenCanvas(screen, directorObject.transform);
+                if (canvasComponent != null)
+                {
+                    canvasComponents.Add(canvasComponent);
+                }
+            }
+
+            var canvasesProperty = serializedDirector.FindProperty("canvases");
+            if (canvasesProperty != null)
+            {
+                canvasesProperty.arraySize = canvasComponents.Count;
+                for (int i = 0; i < canvasComponents.Count; i++)
+                {
+                    canvasesProperty.GetArrayElementAtIndex(i).objectReferenceValue = canvasComponents[i];
+                }
+            }
+
+            serializedDirector.ApplyModifiedProperties();
 
             EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
             Selection.activeGameObject = directorObject;
 
-            Debug.Log("HannibalUI: scene scaffolding ready (EventSystem, Director, PopupLayer). " +
-                      "Add per-screen canvases next.");
+            Debug.Log($"HannibalUI: scene ready — EventSystem, Director, PopupLayer, and " +
+                      $"{canvasComponents.Count} screen canvas(es).");
             return true;
         }
 
@@ -78,6 +107,64 @@ namespace HannibalUI.Editor
             foreach (var type in TypeCache.GetTypesDerivedFrom<VP_Director>())
             {
                 if (!type.IsAbstract && type.Name == "VP_GeneratedDirector")
+                {
+                    return type;
+                }
+            }
+
+            return null;
+        }
+
+        private static Component CreateOrReuseScreenCanvas(ScreenDefinition screen, Transform parent)
+        {
+            var className = ScreenStubGenerator.ClassName(screen);
+            var screenType = ResolveScreenType(className);
+            if (screenType == null)
+            {
+                Debug.LogError($"HannibalUI: screen type '{className}' not found — run Generate first.");
+                return null;
+            }
+
+            var existing = GameObject.Find(className);
+            GameObject screenObject;
+
+            if (existing != null)
+            {
+                screenObject = existing;
+            }
+            else
+            {
+                screenObject = new GameObject(
+                    className, typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
+                screenObject.transform.SetParent(parent, false);
+
+                var canvas = screenObject.GetComponent<Canvas>();
+                canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+                canvas.enabled = false; // hidden until navigated to; the director shows the start screen.
+
+                var scaler = screenObject.GetComponent<CanvasScaler>();
+                scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+                scaler.referenceResolution = new Vector2(1920f, 1080f);
+                scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
+                scaler.matchWidthOrHeight = 0.5f;
+
+                Undo.RegisterCreatedObjectUndo(screenObject, "Create Screen Canvas");
+            }
+
+            var component = screenObject.GetComponent(screenType);
+            if (component == null)
+            {
+                component = Undo.AddComponent(screenObject, screenType);
+            }
+
+            return component;
+        }
+
+        private static System.Type ResolveScreenType(string className)
+        {
+            foreach (var type in TypeCache.GetTypesDerivedFrom<VP_Canvas>())
+            {
+                if (!type.IsAbstract && type.Name == className)
                 {
                     return type;
                 }
