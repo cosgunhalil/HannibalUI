@@ -102,6 +102,11 @@ namespace HannibalUI.Editor
             return true;
         }
 
+        public static bool IsGeneratedDirectorAvailable()
+        {
+            return ResolveGeneratedDirectorType() != null;
+        }
+
         private static System.Type ResolveGeneratedDirectorType()
         {
             foreach (var type in TypeCache.GetTypesDerivedFrom<VP_Director>())

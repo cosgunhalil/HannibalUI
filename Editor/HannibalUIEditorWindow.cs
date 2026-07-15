@@ -21,6 +21,7 @@ namespace HannibalUI.Editor
         private NavigationFlowView _flowView;
         private Label _statusLabel;
         private Button _generateButton;
+        private Button _bootstrapButton;
         private Label _generateSummary;
 
         [MenuItem("HannibalUI/UI Editor")]
@@ -64,6 +65,10 @@ namespace HannibalUI.Editor
 
             _generateButton = new Button(OnGenerate) { text = "Generate" };
             root.Add(_generateButton);
+
+            _bootstrapButton = new Button(OnBootstrap) { text = "Bootstrap Scene" };
+            _bootstrapButton.style.marginTop = 2f;
+            root.Add(_bootstrapButton);
 
             _generateSummary = new Label { style = { whiteSpace = WhiteSpace.Normal, marginTop = 4f } };
             root.Add(_generateSummary);
@@ -195,6 +200,7 @@ namespace HannibalUI.Editor
             {
                 _statusLabel.text = "Select or create a UIProjectConfig to begin.";
                 _generateButton.SetEnabled(false);
+                _bootstrapButton.SetEnabled(false);
                 return;
             }
 
@@ -210,6 +216,8 @@ namespace HannibalUI.Editor
                 _statusLabel.text = "Fix before generating:\n• " + string.Join("\n• ", errors);
                 _generateButton.SetEnabled(false);
             }
+
+            _bootstrapButton.SetEnabled(SceneBootstrapper.IsGeneratedDirectorAvailable());
         }
 
         private void OnGenerate()
@@ -231,6 +239,19 @@ namespace HannibalUI.Editor
             }
 
             UpdateStatus();
+        }
+
+        private void OnBootstrap()
+        {
+            if (_config == null)
+            {
+                return;
+            }
+
+            bool success = SceneBootstrapper.Bootstrap(_config);
+            _generateSummary.text = success
+                ? "Scene bootstrapped — press Play to try it."
+                : "Bootstrap failed — see the Console.";
         }
 
         private void PingGenerated()
