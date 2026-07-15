@@ -17,6 +17,7 @@ namespace HannibalUI.Editor
         private UIProjectConfig _config;
 
         private SerializedObject _serializedConfig;
+        private ObjectField _configField;
         private VisualElement _body;
         private NavigationFlowView _flowView;
         private Label _statusLabel;
@@ -46,14 +47,22 @@ namespace HannibalUI.Editor
             title.style.marginBottom = 6f;
             root.Add(title);
 
-            var configField = new ObjectField("Config")
+            var configRow = new VisualElement { style = { flexDirection = FlexDirection.Row } };
+
+            _configField = new ObjectField("Config")
             {
                 objectType = typeof(UIProjectConfig),
                 allowSceneObjects = false,
                 value = _config
             };
-            configField.RegisterValueChangedCallback(evt => SetConfig(evt.newValue as UIProjectConfig));
-            root.Add(configField);
+            _configField.style.flexGrow = 1f;
+            _configField.RegisterValueChangedCallback(evt => SetConfig(evt.newValue as UIProjectConfig));
+            configRow.Add(_configField);
+
+            var newButton = new Button(CreateNewConfig) { text = "New" };
+            configRow.Add(newButton);
+
+            root.Add(configRow);
 
             var scroll = new ScrollView { style = { flexGrow = 1f } };
             _body = new VisualElement { style = { marginTop = 6f } };
@@ -198,7 +207,7 @@ namespace HannibalUI.Editor
 
             if (_config == null)
             {
-                _statusLabel.text = "Select or create a UIProjectConfig to begin.";
+                _statusLabel.text = "Assign a UIProjectConfig above, or click New to create one.";
                 _generateButton.SetEnabled(false);
                 _bootstrapButton.SetEnabled(false);
                 return;
@@ -218,6 +227,24 @@ namespace HannibalUI.Editor
             }
 
             _bootstrapButton.SetEnabled(SceneBootstrapper.IsGeneratedDirectorAvailable());
+        }
+
+        private void CreateNewConfig()
+        {
+            var path = EditorUtility.SaveFilePanelInProject(
+                "New UIProjectConfig", "UIProjectConfig", "asset",
+                "Choose where to save the new UI project config.");
+
+            if (string.IsNullOrEmpty(path))
+            {
+                return;
+            }
+
+            var config = ScriptableObject.CreateInstance<UIProjectConfig>();
+            AssetDatabase.CreateAsset(config, path);
+            AssetDatabase.SaveAssets();
+
+            _configField.value = config; // fires the change callback → SetConfig.
         }
 
         private void OnGenerate()
