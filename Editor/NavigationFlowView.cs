@@ -21,6 +21,7 @@ namespace HannibalUI.Editor
         private static readonly Color EventColor = new Color(0.18f, 0.24f, 0.30f);
         private static readonly Color BorderColor = new Color(0f, 0f, 0f, 0.4f);
         private static readonly Color StartColor = new Color(0.30f, 0.65f, 0.35f);
+        private static readonly Color PopupColor = new Color(0.30f, 0.22f, 0.32f);
         private static readonly Color ArrowColor = new Color(0.72f, 0.72f, 0.72f);
 
         private readonly List<(Vector2 from, Vector2 to)> _edges = new List<(Vector2, Vector2)>();
@@ -89,7 +90,21 @@ namespace HannibalUI.Editor
                 eventRow++;
             }
 
-            int rows = Mathf.Max(screenRow, eventRow);
+            float popupX = screenX + NodeWidth + ColumnGap;
+            int popupRow = 0;
+            foreach (var screen in config.Screens)
+            {
+                if (!screen.IsPopup || string.IsNullOrWhiteSpace(screen.Name))
+                {
+                    continue;
+                }
+
+                float y = Pad + popupRow * (NodeHeight + RowGap);
+                Add(MakeNode("Popup: " + screen.Name, popupX, y, PopupColor, false));
+                popupRow++;
+            }
+
+            int rows = Mathf.Max(Mathf.Max(screenRow, eventRow), popupRow);
             style.minHeight = Pad * 2f + rows * (NodeHeight + RowGap);
 
             MarkDirtyRepaint();
