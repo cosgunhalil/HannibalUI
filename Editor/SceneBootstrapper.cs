@@ -75,7 +75,7 @@ namespace HannibalUI.Editor
                     continue;
                 }
 
-                var canvasComponent = CreateOrReuseScreenCanvas(screen, directorObject.transform);
+                var canvasComponent = CreateOrReuseScreenCanvas(screen, directorObject.transform, config);
                 if (canvasComponent != null)
                 {
                     canvasComponents.Add(canvasComponent);
@@ -115,7 +115,7 @@ namespace HannibalUI.Editor
             return null;
         }
 
-        private static Component CreateOrReuseScreenCanvas(ScreenDefinition screen, Transform parent)
+        private static Component CreateOrReuseScreenCanvas(ScreenDefinition screen, Transform parent, UIProjectConfig config)
         {
             var className = ScreenStubGenerator.ClassName(screen);
             var screenType = ResolveScreenType(className);
@@ -126,31 +126,59 @@ namespace HannibalUI.Editor
             }
 
             var existing = GameObject.Find(className);
-            GameObject screenObject;
-
             if (existing != null)
             {
-                screenObject = existing;
+                return EnsureScreenComponent(existing, screenType);
             }
-            else
+
+            if (config.SaveScreensAsPrefabs)
             {
-                screenObject = new GameObject(
-                    className, typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
-                screenObject.transform.SetParent(parent, false);
+                var prefabPath = System.IO.Path.Combine(config.PrefabsFolder, className + ".prefab");
+                var prefabAsset = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
 
-                var canvas = screenObject.GetComponent<Canvas>();
-                canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-                canvas.enabled = false; // hidden until navigated to; the director shows the start screen.
-
-                var scaler = screenObject.GetComponent<CanvasScaler>();
-                scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-                scaler.referenceResolution = new Vector2(1920f, 1080f);
-                scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
-                scaler.matchWidthOrHeight = 0.5f;
-
-                Undo.RegisterCreatedObjectUndo(screenObject, "Create Screen Canvas");
+                if (prefabAsset != null)
+                {
+                    var instance = (GameObject)PrefabUtility.InstantiatePrefab(prefabAsset, parent);
+                    Undo.RegisterCreatedObjectUndo(instance, "Instantiate Screen Prefab");
+                    return EnsureScreenComponent(instance, screenType);
+                }
             }
 
+            var screenObject = BuildScreenObject(className, parent);
+            var component = EnsureScreenComponent(screenObject, screenType);
+
+            if (config.SaveScreensAsPrefabs)
+            {
+                EnsureFolder(config.PrefabsFolder);
+                var prefabPath = System.IO.Path.Combine(config.PrefabsFolder, className + ".prefab");
+                PrefabUtility.SaveAsPrefabAssetAndConnect(screenObject, prefabPath, InteractionMode.UserAction);
+            }
+
+            return component;
+        }
+
+        private static GameObject BuildScreenObject(string name, Transform parent)
+        {
+            var screenObject = new GameObject(
+                name, typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
+            screenObject.transform.SetParent(parent, false);
+
+            var canvas = screenObject.GetComponent<Canvas>();
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.enabled = false; // hidden until navigated to; the director shows the start screen.
+
+            var scaler = screenObject.GetComponent<CanvasScaler>();
+            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            scaler.referenceResolution = new Vector2(1920f, 1080f);
+            scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
+            scaler.matchWidthOrHeight = 0.5f;
+
+            Undo.RegisterCreatedObjectUndo(screenObject, "Create Screen Canvas");
+            return screenObject;
+        }
+
+        private static Component EnsureScreenComponent(GameObject screenObject, System.Type screenType)
+        {
             var component = screenObject.GetComponent(screenType);
             if (component == null)
             {
@@ -158,6 +186,14 @@ namespace HannibalUI.Editor
             }
 
             return component;
+        }
+
+        private static void EnsureFolder(string folder)
+        {
+            if (!System.IO.Directory.Exists(folder))
+            {
+                System.IO.Directory.CreateDirectory(folder);
+            }
         }
 
         private static System.Type ResolveScreenType(string className)

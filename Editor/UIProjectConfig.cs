@@ -28,10 +28,20 @@ namespace HannibalUI.Editor
         [SerializeField]
         private string _screensFolder = "Assets/HannibalUI/Runtime/Screens";
 
+        [Tooltip("If on, bootstrap saves each screen as a prefab and places a connected instance in the scene.")]
+        [SerializeField]
+        private bool _saveScreensAsPrefabs;
+
+        [Tooltip("Folder for generated screen prefabs (used when 'Save Screens As Prefabs' is on).")]
+        [SerializeField]
+        private string _prefabsFolder = "Assets/HannibalUI/Prefabs";
+
         public IReadOnlyList<ScreenDefinition> Screens => _screens;
         public IReadOnlyList<TransitionDefinition> Transitions => _transitions;
         public string GeneratedFolder => _generatedFolder;
         public string ScreensFolder => _screensFolder;
+        public bool SaveScreensAsPrefabs => _saveScreensAsPrefabs;
+        public string PrefabsFolder => _prefabsFolder;
     }
 
     /// <summary>One screen (canvas) in the project. Its name becomes a <c>CanvasType</c> member.</summary>

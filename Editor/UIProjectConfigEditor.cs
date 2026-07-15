@@ -11,6 +11,8 @@ namespace HannibalUI.Editor
         private SerializedProperty _transitions;
         private SerializedProperty _generatedFolder;
         private SerializedProperty _screensFolder;
+        private SerializedProperty _saveScreensAsPrefabs;
+        private SerializedProperty _prefabsFolder;
 
         private void OnEnable()
         {
@@ -18,6 +20,8 @@ namespace HannibalUI.Editor
             _transitions = serializedObject.FindProperty("_transitions");
             _generatedFolder = serializedObject.FindProperty("_generatedFolder");
             _screensFolder = serializedObject.FindProperty("_screensFolder");
+            _saveScreensAsPrefabs = serializedObject.FindProperty("_saveScreensAsPrefabs");
+            _prefabsFolder = serializedObject.FindProperty("_prefabsFolder");
         }
 
         public override void OnInspectorGUI()
@@ -32,6 +36,8 @@ namespace HannibalUI.Editor
             EditorGUILayout.LabelField("Output", EditorStyles.boldLabel);
             EditorGUILayout.PropertyField(_generatedFolder);
             EditorGUILayout.PropertyField(_screensFolder);
+            EditorGUILayout.PropertyField(_saveScreensAsPrefabs);
+            EditorGUILayout.PropertyField(_prefabsFolder);
 
             serializedObject.ApplyModifiedProperties();
 
