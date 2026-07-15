@@ -23,6 +23,14 @@ namespace HannibalUI.Tests.Runtime
             {
                 RewindCount++;
             }
+
+            public override void ApplyActivated()
+            {
+            }
+
+            public override void ApplyDeactivated()
+            {
+            }
         }
 
         // Exposes the protected serialized list so a test can populate it without the Inspector.

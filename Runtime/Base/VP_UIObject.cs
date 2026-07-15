@@ -27,7 +27,39 @@ namespace HannibalUI.Runtime.Base
         }
 
         public virtual void Setup(Vector2 canvasSize) { }
-        public void PlayActivateAnimation(float activationTime) 
+
+#if UNITY_EDITOR
+        /// <summary>Editor-only: snap this object's animations to their activated/deactivated pose
+        /// (no tween), for previewing coordinates without entering Play mode.</summary>
+        public void EditorPreviewAnimations(bool activated)
+        {
+            if (_animationComponents == null)
+            {
+                return;
+            }
+
+            var rectTransform = GetComponent<RectTransform>();
+            foreach (var animationComponent in _animationComponents)
+            {
+                if (animationComponent == null)
+                {
+                    continue;
+                }
+
+                animationComponent.Bind(rectTransform);
+                if (activated)
+                {
+                    animationComponent.ApplyActivated();
+                }
+                else
+                {
+                    animationComponent.ApplyDeactivated();
+                }
+            }
+        }
+#endif
+
+        public void PlayActivateAnimation(float activationTime)
         {
             if (ObjectRectTransform == null) 
             {

@@ -13,6 +13,7 @@ namespace HannibalUI.Runtime.Animation
     [Serializable]
     public abstract class AnimationComponent : IAnimable
     {
+        [Tooltip("Easing curve applied to this animation.")]
         [SerializeField] private Ease _ease = Ease.InOutSine;
 
         protected RectTransform _rectTransform;
@@ -26,5 +27,11 @@ namespace HannibalUI.Runtime.Animation
 
         public abstract void PlayForward(float activationTime);
         public abstract void PlayRewind(float deactivationTime);
+
+        /// <summary>Snap the target to its activated end-state instantly (no tween).</summary>
+        public abstract void ApplyActivated();
+
+        /// <summary>Snap the target to its deactivated end-state instantly (no tween).</summary>
+        public abstract void ApplyDeactivated();
     }
 }
